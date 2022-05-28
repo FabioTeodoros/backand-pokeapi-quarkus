@@ -7,24 +7,28 @@ import java.util.Objects;
 
 public class PokemonDetail {
 
-   // private String id;
-   // private Integer height;
-   // private Integer weight;
+    private String id;
+    private String height;
+    private String weight;
     private String name;
-   // private String baseExperience;
-   // private List<TypesOfType> types;
-   // private List<AbilitiesOfAbility> abilities;
-   // private Sprites sprites;
+    private String baseExperience;
+    private List <TypeOfType> types;
+    private List <AbilitiesOfAbility> abilities;
+    private Sprites sprites;
 
     public PokemonDetail() {
     }
 
-    /*public PokemonDetail(String id
-            , Integer height
-            , Integer weight
+    public PokemonDetail(String name) {
+        this.name = name;
+    }
+
+    public PokemonDetail(String id
+            , String height
+            , String weight
             , String name
             , String baseExperience
-            , List<TypesOfType> types
+            , List <TypeOfType> types
             , List<AbilitiesOfAbility> abilities
             , Sprites sprites) {
         this.id = id;
@@ -37,22 +41,23 @@ public class PokemonDetail {
         this.sprites = sprites;
     }
 
-    public Integer getHeight() {
+
+    public String getHeight() {
         return height;
     }
 
-    public void setHeight(Integer height) {
+    public void setHeight(String height) {
         this.height = height;
     }
 
-    public Integer getWeight() {
+    public String getWeight() {
         return weight;
     }
 
-    public void setWeight(Integer weight) {
+    public void setWeight(String weight) {
         this.weight = weight;
     }
-*/
+
     public String getName() {
         return name;
     }
@@ -60,7 +65,7 @@ public class PokemonDetail {
     public void setName(String name) {
         this.name = name;
     }
-/*
+
     @JsonProperty("base_experience")
     public String getBaseExperience() {
         return baseExperience;
@@ -70,11 +75,11 @@ public class PokemonDetail {
         this.baseExperience = baseExperience;
     }
 
-    public List<TypesOfType> getTypes() {
+    public List<TypeOfType> getTypes() {
         return types;
     }
 
-    public void setTypes(List<TypesOfType> types) {
+    public void setTypes(List<TypeOfType> types) {
         this.types = types;
     }
 
@@ -118,5 +123,4 @@ public class PokemonDetail {
         return id;
     }
 
- */
 }

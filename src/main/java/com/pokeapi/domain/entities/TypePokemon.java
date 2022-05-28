@@ -2,13 +2,13 @@ package com.pokeapi.domain.entities;
 
 public class TypePokemon {
 
-    private TypePokemon type;
+    private String name;
 
-    public TypePokemon getType() {
-        return type;
+    public String getName() {
+        return name;
     }
 
-    public void setType(TypePokemon type) {
-        this.type = type;
+    public void setName(String name) {
+        this.name = name;
     }
 }
