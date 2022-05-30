@@ -1,6 +1,6 @@
 package com.pokeapi.domain.entities;
 
-public class PokemonAllList {
+public class PokemonForList {
 
     private String name;
     private String url;

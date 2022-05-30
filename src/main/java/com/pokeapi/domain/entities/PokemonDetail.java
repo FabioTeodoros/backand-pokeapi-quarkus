@@ -3,7 +3,6 @@ package com.pokeapi.domain.entities;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
-import java.util.Objects;
 
 public class PokemonDetail {
 
@@ -14,7 +13,7 @@ public class PokemonDetail {
     private String baseExperience;
     private List <TypeOfType> types;
     private List <AbilitiesOfAbility> abilities;
-    private Sprites sprites;
+    private Sprite sprites;
 
     public PokemonDetail() {
     }
@@ -22,25 +21,6 @@ public class PokemonDetail {
     public PokemonDetail(String name) {
         this.name = name;
     }
-
-    public PokemonDetail(String id
-            , String height
-            , String weight
-            , String name
-            , String baseExperience
-            , List <TypeOfType> types
-            , List<AbilitiesOfAbility> abilities
-            , Sprites sprites) {
-        this.id = id;
-        this.height = height;
-        this.weight = weight;
-        this.name = name;
-        this.baseExperience = baseExperience;
-        this.types = types;
-        this.abilities = abilities;
-        this.sprites = sprites;
-    }
-
 
     public String getHeight() {
         return height;
@@ -91,36 +71,20 @@ public class PokemonDetail {
         this.abilities = abilities;
     }
 
-    public Sprites getSprites() {
+    public Sprite getSprites() {
         return sprites;
     }
 
-    public void setSprites(Sprites sprites) {
+    public void setSprites(Sprite sprites) {
         this.sprites = sprites;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof PokemonDetail)) {
-            return false;
-        }
-
-        PokemonDetail other = (PokemonDetail) obj;
-
-        return Objects.equals(other.name, this.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.name);
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
 }

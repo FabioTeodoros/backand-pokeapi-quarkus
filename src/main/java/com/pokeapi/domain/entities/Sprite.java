@@ -2,10 +2,12 @@ package com.pokeapi.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Sprites {
+public class Sprite {
 
     private String spriteFrontDefault;
     private SpriteDreamWorld spriteDreamWorld;
+
+
 
     @JsonProperty("other")
     public SpriteDreamWorld getSpriteDreamWorld() {
@@ -24,5 +26,6 @@ public class Sprites {
     public void setSpriteFrontDefault(String spriteFrontDefault) {
         this.spriteFrontDefault = spriteFrontDefault;
     }
+
 }
 
