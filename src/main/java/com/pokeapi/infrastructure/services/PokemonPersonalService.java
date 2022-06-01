@@ -3,10 +3,7 @@ package com.pokeapi.infrastructure.services;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
-import com.pokeapi.domain.entities.AbilitiesOfAbility;
-import com.pokeapi.domain.entities.PokemonDetail;
-import com.pokeapi.domain.entities.Sprite;
-import com.pokeapi.domain.entities.TypeOfType;
+import com.pokeapi.domain.entities.*;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -23,13 +20,13 @@ public class PokemonPersonalService {
     @Inject
     MongoClient mongoClient;
 
-    public List<PokemonDetail> list() {
-        List<PokemonDetail> list = new ArrayList<>();
+    public List<PokemonDetail> listDetail(String id) {
+        List<PokemonDetail> pokemonDetails = new ArrayList<>();
         MongoCursor<Document> cursor = getCollection().find().iterator();
 
         try {
             while (cursor.hasNext()) {
-                Document document = cursor.next();
+                Document document = cursor.next().append("id", id);
                 PokemonDetail pokemonDetail = new PokemonDetail();
                 pokemonDetail.setId(document.getString("id"));
                 pokemonDetail.setHeight(document.getString("height"));
@@ -40,13 +37,33 @@ public class PokemonPersonalService {
                 pokemonDetail.setAbilities((List<AbilitiesOfAbility>)document.get("abilities"));
                // pokemonDetail.setSprites((Sprite) document.get("sprites"));
 
-                list.add(pokemonDetail);
+                pokemonDetails.add(pokemonDetail);
             }
         } finally {
             cursor.close();
         }
-        return list;
+        return pokemonDetails;
     }
+
+    public List<PokemonForList> listPersonalBd() {
+        List<PokemonForList> listPersonalBd = new ArrayList<>();
+        MongoCursor<Document> cursor = getCollection().find().iterator();
+
+        try {
+            while (cursor.hasNext()) {
+                Document document = cursor.next();
+                PokemonForList pokemonForList = new PokemonForList();
+                pokemonForList.setName(document.getString("name"));
+                pokemonForList.setUrl(document.getString("url"));
+
+                listPersonalBd.add(pokemonForList);
+            }
+        } finally {
+            cursor.close();
+        }
+        return listPersonalBd;
+    }
+
 
     public void add(PokemonDetail pokemonDetail) {
         Document document = new Document()

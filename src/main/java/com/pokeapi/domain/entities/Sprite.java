@@ -7,8 +7,6 @@ public class Sprite {
     private String spriteFrontDefault;
     private SpriteDreamWorld spriteDreamWorld;
 
-
-
     @JsonProperty("other")
     public SpriteDreamWorld getSpriteDreamWorld() {
         return spriteDreamWorld;
