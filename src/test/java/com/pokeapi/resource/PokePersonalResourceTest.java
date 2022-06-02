@@ -33,7 +33,7 @@ class PokePersonalResourceTest {
         given()
                 .contentType(ContentType.JSON)
                 .when()
-                .get("/")
+                .get("/todos")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode());
     }

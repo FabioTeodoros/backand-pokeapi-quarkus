@@ -22,10 +22,10 @@ public abstract class AbstractPokemonOficialDetailService implements PokemonOfic
         return path.endsWith("/") ? path: path + "/";
     }
 
-    protected abstract String buildPath(Integer id);
+    protected abstract String buildPath(String id);
 
     @Override
-    public PokemonDetail buscaPokemonDetail(Integer id){
+    public PokemonDetail buscaPokemonDetail(String id){
         LOG.info(String.format("Buscando Pokemon id %s no site %s",id, dominio));
         return target.path(buildPath(id)).request().get(PokemonDetail.class);
     }

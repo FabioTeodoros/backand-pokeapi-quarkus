@@ -2,7 +2,9 @@ package com.pokeapi.resource;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.*;
+import static org.mockito.Mockito.doReturn;
 
+import com.pokeapi.domain.entities.PokemonDetail;
 import com.pokeapi.infrastructure.services.PokemonOficialAllPokemonService;
 import com.pokeapi.infrastructure.services.PokemonOficialDetailService;
 import io.quarkus.test.Mock;
@@ -10,20 +12,54 @@ import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.Nested;
+import org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import javax.inject.Inject;
 import javax.ws.rs.core.Response;
+
 
 @QuarkusTest
 @TestHTTPEndpoint(PokemonOficialResource.class)
 public class PokemonOficialResourceTest {
 
-    @Inject
-    PokemonOficialAllPokemonService pokemonOficialAllPokemonService;
-    @Inject
-    PokemonOficialDetailService pokemonOficialDetailService;
+    @Mock
+   private PokemonOficialDetailService pokemonOficialDetailService;
+    private PokemonOficialResource pokemonOficialResource;
+    @BeforeEach
+    public void setup(){
+
+        pokemonOficialResource = new PokemonOficialResource();
+    }
+
+   // @Nested
+    @DisplayName("Given pokemonDetail method")
+    class pokemonDetail{
+        Response response;
+        //@Nested
+        @DisplayName("When response is success")
+        class successTest{
+            @BeforeEach
+            public void mockAndAct(){
+                String idMock = "id";
+                PokemonDetail pokemonDetailMock = new PokemonDetail();
+                doReturn(pokemonDetailMock).when(pokemonOficialDetailService).buscaPokemonDetail(idMock);
+
+             //   response = pokemonOficialResource.pokemonDetail(idMock);
+            }
+
+            @Test
+            @DisplayName("Then response status is ok ")
+            void validateSuccessTest(){
+                assertEquals(Response.Status.OK, response.getStatusInfo());
+            }
+
+        }
+    }
+
 
     @Test
     @DisplayName("check the endpoint pokemon")

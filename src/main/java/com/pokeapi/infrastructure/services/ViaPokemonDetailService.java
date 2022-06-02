@@ -10,7 +10,7 @@ public class ViaPokemonDetailService extends AbstractPokemonOficialDetailService
     }
 
     @Override
-    protected String buildPath(Integer id) {
+    protected String buildPath(String id) {
         return String.format("%s", id);
     }
 

@@ -4,5 +4,5 @@ import com.pokeapi.domain.entities.PokemonDetail;
 
 public interface PokemonOficialDetailService {
 
-     PokemonDetail buscaPokemonDetail(Integer id);
+     PokemonDetail buscaPokemonDetail(String id);
 }

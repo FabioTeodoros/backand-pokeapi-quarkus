@@ -2,10 +2,7 @@ package com.pokeapi.resource;
 
 import com.pokeapi.domain.entities.PokemonDetail;
 import com.pokeapi.domain.entities.PokemonForList;
-import com.pokeapi.infrastructure.services.PokemonOficialDetailService;
 import com.pokeapi.infrastructure.services.PokemonPersonalService;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import org.jboss.resteasy.reactive.ResponseStatus;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -24,9 +21,14 @@ public class PokePersonalResource {
     PokemonPersonalService pokemonPersonalService;
 
     @GET
-    @Path("/todos/{id}")
-    public List<PokemonDetail> PokemonPersonalDetailId(@PathParam("id") final String id) {
-            return pokemonPersonalService.listDetail(id);
+    @Path("/todos/{name}")
+    public Response pokemonPersonalDetailId(PokemonDetail pokemonDetail, @PathParam("name") final String name) {
+        try {
+            return Response.ok(pokemonPersonalService.listDetailId(name)).build();
+        }
+        catch (RuntimeException e){
+            return Response.status(Response.Status.NO_CONTENT).build();
+        }
     }
 
     @GET
@@ -36,24 +38,24 @@ public class PokePersonalResource {
     }
 
     @POST
-    @Path("/create/{id}")
-    public List<PokemonDetail> add(PokemonDetail pokemonDetail, String id) {
+    @Path("/create")
+    public List<PokemonDetail> add(PokemonDetail pokemonDetail) {
         pokemonPersonalService.add(pokemonDetail);
-        return pokemonPersonalService.listDetail(id);
+        return pokemonPersonalService.listDetail();
     }
 
     @DELETE
-    @Path("/delete/{id}")
-    public List<PokemonDetail> deleteById(String id) {
-        pokemonPersonalService.delete(id);
-        return pokemonPersonalService.listDetail(id);
+    @Path("/delete/{name}")
+    public List<PokemonDetail> deleteByName(@PathParam("name") final String name)  {
+        pokemonPersonalService.delete(name);
+        return pokemonPersonalService.listDetail();
     }
 
     @PUT
-    @Path("/update/{id}")
-    public List<PokemonDetail> updateById( String id) {
-        pokemonPersonalService.update(id);
-        return pokemonPersonalService.listDetail(id);
+    @Path("/update/{name}")
+    public List<PokemonDetail> updateById(@PathParam("name") final String name) {
+        pokemonPersonalService.update(name);
+        return pokemonPersonalService.listDetail();
     }
 }
 

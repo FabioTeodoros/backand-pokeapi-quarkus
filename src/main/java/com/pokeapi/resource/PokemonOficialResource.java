@@ -21,15 +21,13 @@ public class PokemonOficialResource {
 
     @GET
     @Path("/todos/{id}")
-    public Response pokemonDetail(@PathParam("id") final Integer id) {
+    public Object pokemonDetail(@PathParam("id") final Integer id) {
 
        try{
-           return Response.ok(pokemonOficialDetailService.buscaPokemonDetail(id)).build();
+           return Response.ok(pokemonOficialDetailService.buscaPokemonDetail(id.toString())).build();
        }
        catch (RuntimeException e){
-           return Response.status(Response.Status.NOT_FOUND)
-                   .entity("You entered an invalid ID.")
-                   .build();
+           return Response.status(Response.Status.NO_CONTENT).build();
        }
     }
 
@@ -41,9 +39,7 @@ public class PokemonOficialResource {
             return Response.ok(pokemonOficialAllPokemonService.getAll()).build();
         }
         catch (RuntimeException e){
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("You entered an invalid ID.")
-                    .build();
+            return Response.status(Response.Status.NO_CONTENT).build();
         }
 
     }
