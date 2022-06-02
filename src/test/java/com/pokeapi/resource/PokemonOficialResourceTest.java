@@ -1,149 +1,95 @@
 package com.pokeapi.resource;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.*;
-import static org.mockito.Mockito.doReturn;
-
 import com.pokeapi.domain.entities.PokemonDetail;
-import com.pokeapi.infrastructure.services.PokemonOficialAllPokemonService;
-import com.pokeapi.infrastructure.services.PokemonOficialDetailService;
-import io.quarkus.test.Mock;
-import io.quarkus.test.common.http.TestHTTPEndpoint;
-import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.http.ContentType;
+import com.pokeapi.infrastructure.services.*;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.Nested;
-import org.mockito.Mockito.*;
+import io.quarkus.test.common.http.TestHTTPEndpoint;
+
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 import javax.ws.rs.core.Response;
 
 
-@QuarkusTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ExtendWith(MockitoExtension.class)
 @TestHTTPEndpoint(PokemonOficialResource.class)
 public class PokemonOficialResourceTest {
 
     @Mock
-   private PokemonOficialDetailService pokemonOficialDetailService;
-    private PokemonOficialResource pokemonOficialResource;
-    @BeforeEach
-    public void setup(){
+    private ViaPokemonDetailService viaPokemonDetailService;
 
-        pokemonOficialResource = new PokemonOficialResource();
+    @Mock
+    private PokemonOficialAllPokemonService pokemonOficialAllPokemonService;
+
+    @InjectMocks
+    private PokemonOficialResource pokemonOficialResource;
+
+    @BeforeAll
+    public void init(){
+        MockitoAnnotations.openMocks(this);
     }
 
-   // @Nested
+    @BeforeEach
+    public void setup(){
+        pokemonOficialResource = new PokemonOficialResource(viaPokemonDetailService, pokemonOficialAllPokemonService);
+    }
+
+   @Nested
     @DisplayName("Given pokemonDetail method")
     class pokemonDetail{
         Response response;
-        //@Nested
+        @Nested
         @DisplayName("When response is success")
         class successTest{
             @BeforeEach
             public void mockAndAct(){
                 String idMock = "id";
                 PokemonDetail pokemonDetailMock = new PokemonDetail();
-                doReturn(pokemonDetailMock).when(pokemonOficialDetailService).buscaPokemonDetail(idMock);
 
-             //   response = pokemonOficialResource.pokemonDetail(idMock);
+                pokemonDetailMock.setName("pokeTest");
+
+                doReturn(pokemonDetailMock).when(viaPokemonDetailService).buscaPokemonDetail(idMock);
+
+                response = pokemonOficialResource.pokemonDetail(idMock);
             }
 
             @Test
             @DisplayName("Then response status is ok ")
             void validateSuccessTest(){
-                assertEquals(Response.Status.OK, response.getStatusInfo());
+                assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
             }
 
         }
+
+       @Nested
+       @DisplayName("when it raises exceptions")
+       class failTest{
+           @BeforeEach
+           public void mockAndAct(){
+               String idMock = "id";
+               //PokemonDetail pokemonDetailMock = new PokemonDetail();
+               RuntimeException runtimeMock = new RuntimeException();
+
+               doThrow(runtimeMock).when(viaPokemonDetailService).buscaPokemonDetail(idMock);
+
+               response = pokemonOficialResource.pokemonDetail(idMock);
+           }
+
+           @Test
+           @DisplayName("Then response status is no content ")
+           void validateExceptionTest(){
+               assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+           }
+
+       }
     }
 
-
-    @Test
-    @DisplayName("check the endpoint pokemon")
-    public void testGetAllOk() {
-        given()
-                .contentType(ContentType.JSON)
-                .when()
-                .get("/pokemon")
-                .then()
-                .statusCode(Response.Status.OK.getStatusCode())
-                .body("count", is ("1126"), "name", anything(), "url", anything());
-    }
-
-    @Test
-    @DisplayName("check the endpoint bad link pokemon")
-    public void testGetAllBadLink() {
-        given()
-                .contentType(ContentType.JSON)
-                .when()
-                .get("/pokemon1")
-                .then()
-                .statusCode(Response.Status.NOT_FOUND.getStatusCode());
-    }
-
-    @Test
-    @DisplayName("check the endpoint bad link pokemon")
-    public void testGetAllNotLink() {
-        given()
-                .contentType(ContentType.JSON)
-                .when()
-                .get("/")
-                .then()
-                .statusCode(Response.Status.NOT_FOUND.getStatusCode());
-    }
-
-    @Test
-    @DisplayName("check the endpoint ID")
-    public void testGetDetailOk() {
-        given()
-                .contentType(ContentType.JSON)
-                .when()
-                .get("/1")
-                .then()
-                .statusCode(Response.Status.OK.getStatusCode())
-                .body("id", is ("1")
-                        , "height", is ("7")
-                        , "weight", is ("69")
-                        ,"name", is ("bulbasaur")
-                        ,"type", anything()
-                        ,"abilities", anything()
-                        ,"sprites", anything()
-                        ,"base_experience", anything());
-    }
-
-    @Test
-    @DisplayName("check the endpoint not ID Link")
-    public void testGetDetailNotLink() {
-        given()
-                .contentType(ContentType.JSON)
-                .when()
-                .get("/")
-                .then()
-                .statusCode(Response.Status.NOT_FOUND.getStatusCode());
-            }
-
-    @Test
-    @DisplayName("check the endpoint ID negative ID link")
-    public void testGetDetailNegativeID() {
-        given()
-                .contentType(ContentType.JSON)
-                .when()
-                .get("/-1")
-                .then()
-                .statusCode(Response.Status.NOT_FOUND.getStatusCode());
-    }
-
-    @Test
-    @DisplayName("check the endpoint unknown number ID")
-    public void testGetDetailUnknownNumberID() {
-        given()
-                .contentType(ContentType.JSON)
-                .when()
-                .get("/%")
-                .then()
-                .statusCode(Response.Status.NOT_FOUND.getStatusCode());
-    }
 }

@@ -29,7 +29,7 @@ public class PokemonPersonalService {
     public List<PokemonDetail> listDetail() {
         List<PokemonDetail> pokemonDetails = new ArrayList<>();
         MongoCursor<Document> cursor = getCollection().find().iterator();
-        String uuid = UUID.randomUUID().toString();
+
         try {
             while (cursor.hasNext()) {
                 Document document = cursor.next();
@@ -71,9 +71,7 @@ public class PokemonPersonalService {
                 if(document.getString("name").equals(name)){
                     pokemonDetails.add(pokemonDetail);
                 }
-
             }
-
         }
         finally {
             cursor.close();
@@ -127,14 +125,6 @@ public class PokemonPersonalService {
 
             LOG.info(String.format("deleted pokemon name: %s", name));
     }
-
-//    public void update(String id) {
-//        Document document = new Document()
-//                .append("id", id);
-//        Document update = new Document()
-//                .append("id", id);
-//                getCollection().updateOne((Bson) document, (Bson) update);
-//    }
 
     public List<PokemonDetail> update(String name) {
         List<PokemonDetail> update = new ArrayList<>();

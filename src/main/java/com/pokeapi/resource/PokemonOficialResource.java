@@ -1,6 +1,6 @@
 package com.pokeapi.resource;
 
-import com.pokeapi.domain.entities.PokemonList;
+import com.pokeapi.domain.entities.PokemonDetail;
 import com.pokeapi.infrastructure.services.PokemonOficialAllPokemonService;
 import com.pokeapi.infrastructure.services.PokemonOficialDetailService;
 
@@ -10,9 +10,18 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("/pokeoficial")
-@Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+
 public class PokemonOficialResource {
+
+    @Inject
+    public PokemonOficialResource(
+            final PokemonOficialDetailService pokemonOficialDetailService,
+            final PokemonOficialAllPokemonService pokemonOficialAllPokemonService
+    ){
+        this.pokemonOficialDetailService = pokemonOficialDetailService;
+        this.pokemonOficialAllPokemonService = pokemonOficialAllPokemonService;
+    }
 
     @Inject
     PokemonOficialDetailService pokemonOficialDetailService;
@@ -21,10 +30,11 @@ public class PokemonOficialResource {
 
     @GET
     @Path("/todos/{id}")
-    public Object pokemonDetail(@PathParam("id") final Integer id) {
+    public Response pokemonDetail(@PathParam("id") final String id) {
 
        try{
-           return Response.ok(pokemonOficialDetailService.buscaPokemonDetail(id.toString())).build();
+           PokemonDetail result = pokemonOficialDetailService.buscaPokemonDetail(id);
+           return Response.ok().entity(result).build();
        }
        catch (RuntimeException e){
            return Response.status(Response.Status.NO_CONTENT).build();
