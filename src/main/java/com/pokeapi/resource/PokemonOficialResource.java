@@ -1,6 +1,5 @@
 package com.pokeapi.resource;
 
-import com.pokeapi.domain.entities.PokemonDetail;
 import com.pokeapi.infrastructure.services.PokemonOficialAllPokemonService;
 import com.pokeapi.infrastructure.services.PokemonOficialDetailService;
 
@@ -33,8 +32,7 @@ public class PokemonOficialResource {
     public Response pokemonDetail(@PathParam("id") final String id) {
 
        try{
-           PokemonDetail result = pokemonOficialDetailService.buscaPokemonDetail(id);
-           return Response.ok().entity(result).build();
+           return Response.ok().entity(pokemonOficialDetailService.buscaPokemonDetail(id)).build();
        }
        catch (RuntimeException e){
            return Response.status(Response.Status.NO_CONTENT).build();
@@ -46,7 +44,7 @@ public class PokemonOficialResource {
     public Response getAll() {
 
         try{
-            return Response.ok(pokemonOficialAllPokemonService.getAll()).build();
+            return Response.ok().entity(pokemonOficialAllPokemonService.getAll()).build();
         }
         catch (RuntimeException e){
             return Response.status(Response.Status.NO_CONTENT).build();

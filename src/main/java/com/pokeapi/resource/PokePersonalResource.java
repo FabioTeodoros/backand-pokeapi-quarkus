@@ -1,16 +1,12 @@
 package com.pokeapi.resource;
 
 import com.pokeapi.domain.entities.PokemonDetail;
-import com.pokeapi.domain.entities.PokemonForList;
 import com.pokeapi.infrastructure.services.PokemonPersonalService;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
-
-import static javax.ws.rs.core.Response.status;
 
 @Path("/pokepersonal")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -18,14 +14,22 @@ import static javax.ws.rs.core.Response.status;
 public class PokePersonalResource {
 
     @Inject
+    public PokePersonalResource(PokemonPersonalService pokemonPersonalService){
+
+        this.pokemonPersonalService = pokemonPersonalService;
+    }
+
+    @Inject
     PokemonPersonalService pokemonPersonalService;
 
     @GET
-    @Path("/todos/{name}")
-    public Response pokemonPersonalDetailId(PokemonDetail pokemonDetail, @PathParam("name") final String name) {
+    @Path("/todos/{id}")
+    public Response pokemonPersonalDetailId(PokemonDetail pokemonDetail, @PathParam("id") final String id) {
+
         try {
-            return Response.ok(pokemonPersonalService.listDetailId(name)).build();
+            return Response.ok(pokemonPersonalService.listDetailId(id)).build();
         }
+
         catch (RuntimeException e){
             return Response.status(Response.Status.NO_CONTENT).build();
         }
@@ -33,29 +37,68 @@ public class PokePersonalResource {
 
     @GET
     @Path("/todos")
-    public List<PokemonForList> listToPersonalBd() {
-        return pokemonPersonalService.listPersonalBd();
+    public Response listToPersonalBd() {
+
+        try{
+            return Response.ok(pokemonPersonalService.listPersonalBd()).build();
+        }
+
+        catch (RuntimeException e){
+            return Response.status(Response.Status.NO_CONTENT).build();
+        }
     }
 
     @POST
-    @Path("/create")
-    public List<PokemonDetail> add(PokemonDetail pokemonDetail) {
-        pokemonPersonalService.add(pokemonDetail);
-        return pokemonPersonalService.listDetail();
+    @Path("/create/{id}")
+    public Response add(PokemonDetail pokemonDetail, @PathParam("id") final String id) {
+        pokemonPersonalService.add(pokemonDetail, id);
+
+        try{
+            return Response.ok().build();
+        }
+
+        catch (RuntimeException e){
+            return Response.status(Response.Status.NO_CONTENT).build();
+        }
     }
 
     @DELETE
-    @Path("/delete/{name}")
-    public List<PokemonDetail> deleteByName(@PathParam("name") final String name)  {
-        pokemonPersonalService.delete(name);
-        return pokemonPersonalService.listDetail();
+    @Path("/delete/{id}")
+    public Response deleteById(@PathParam("id") final String id)  {
+        pokemonPersonalService.delete(id);
+
+        try {
+            return Response.ok().build();
+        }
+        catch (RuntimeException e){
+            return Response.status(Response.Status.NO_CONTENT).build();
+        }
+    }
+
+    @DELETE
+    @Path("/deleteall")
+    public Response deleteAll()  {
+        pokemonPersonalService.deleteAll();
+
+        try {
+            return Response.ok().build();
+        }
+        catch (RuntimeException e){
+            return Response.status(Response.Status.NO_CONTENT).build();
+        }
     }
 
     @PUT
-    @Path("/update/{name}")
-    public List<PokemonDetail> updateById(@PathParam("name") final String name) {
-        pokemonPersonalService.update(name);
-        return pokemonPersonalService.listDetail();
+    @Path("/update/{id}")
+    public Response updateById(PokemonDetail pokemonDetail, @PathParam("id") final String id) {
+        pokemonPersonalService.update(pokemonDetail, id);
+
+        try {
+            return Response.ok().build();
+        }
+        catch (RuntimeException e){
+            return Response.status(Response.Status.NO_CONTENT).build();
+        }
     }
 }
 

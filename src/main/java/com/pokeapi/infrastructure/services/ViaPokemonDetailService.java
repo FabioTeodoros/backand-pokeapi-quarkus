@@ -4,7 +4,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 
 @ApplicationScoped
-@Dependent
 public class ViaPokemonDetailService extends AbstractPokemonOficialDetailService {
 
     public ViaPokemonDetailService(){
