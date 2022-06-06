@@ -10,7 +10,7 @@ import javax.ws.rs.core.Response;
 
 @Path("/pokeoficial")
 @Produces(MediaType.APPLICATION_JSON)
-
+@Consumes(MediaType.APPLICATION_JSON)
 public class PokemonOficialResource {
 
     @Inject
@@ -34,7 +34,7 @@ public class PokemonOficialResource {
        try{
            return Response.ok().entity(pokemonOficialDetailService.buscaPokemonDetail(id)).build();
        }
-       catch (RuntimeException e){
+       catch (Exception e){
            return Response.status(Response.Status.NO_CONTENT).build();
        }
     }
@@ -46,7 +46,7 @@ public class PokemonOficialResource {
         try{
             return Response.ok().entity(pokemonOficialAllPokemonService.getAll()).build();
         }
-        catch (RuntimeException e){
+        catch (Exception e){
             return Response.status(Response.Status.NO_CONTENT).build();
         }
 

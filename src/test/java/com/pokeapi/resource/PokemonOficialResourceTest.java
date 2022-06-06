@@ -30,9 +30,6 @@ public class PokemonOficialResourceTest {
     @Mock
     private ViaPokemonAllService viaPokemonAllService;
 
-    @Mock
-    private PokemonOficialAllPokemonService pokemonOficialAllPokemonService;
-
     @InjectMocks
     private PokemonOficialResource pokemonOficialResource;
 
@@ -77,8 +74,8 @@ public class PokemonOficialResourceTest {
            @BeforeEach
            public void mockAndAct(){
                String idMock = "id";
-               RuntimeException runtimeMock = new RuntimeException();
-               doThrow(runtimeMock).when(viaPokemonDetailService).buscaPokemonDetail(idMock);
+               RuntimeException ExceptionMock = new RuntimeException();
+               doThrow(ExceptionMock).when(viaPokemonDetailService).buscaPokemonDetail(idMock);
 
                response = pokemonOficialResource.pokemonDetail(idMock);
            }
@@ -115,8 +112,8 @@ public class PokemonOficialResourceTest {
         class FailAllTest{
             @BeforeEach
             public void mockAndAct(){
-                RuntimeException runtimeMock = new RuntimeException();
-                doThrow(runtimeMock).when(viaPokemonAllService).getAll();
+                RuntimeException ExceptionMock = new RuntimeException();
+                doThrow(ExceptionMock).when(viaPokemonAllService).getAll();
 
                 response = pokemonOficialResource.getAll();
             }

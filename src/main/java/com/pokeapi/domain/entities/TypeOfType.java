@@ -1,7 +1,5 @@
 package com.pokeapi.domain.entities;
 
-import java.util.List;
-
 public class TypeOfType {
 
     private TypePokemon type;

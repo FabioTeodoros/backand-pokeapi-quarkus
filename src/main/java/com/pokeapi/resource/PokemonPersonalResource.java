@@ -1,20 +1,24 @@
 package com.pokeapi.resource;
 
+import com.mongodb.MongoException;
+import com.mongodb.MongoTimeoutException;
 import com.pokeapi.domain.entities.PokemonDetail;
+import com.pokeapi.domain.entities.PokemonForList;
 import com.pokeapi.infrastructure.services.PokemonPersonalService;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 @Path("/pokepersonal")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class PokePersonalResource {
+public class PokemonPersonalResource {
 
     @Inject
-    public PokePersonalResource(PokemonPersonalService pokemonPersonalService){
+    public PokemonPersonalResource(final PokemonPersonalService pokemonPersonalService){
 
         this.pokemonPersonalService = pokemonPersonalService;
     }
@@ -24,13 +28,13 @@ public class PokePersonalResource {
 
     @GET
     @Path("/todos/{id}")
-    public Response pokemonPersonalDetailId(PokemonDetail pokemonDetail, @PathParam("id") final String id) {
+    public Response pokemonPersonalDetailId(@PathParam("id") final String id) {
 
         try {
             return Response.ok(pokemonPersonalService.listDetailId(id)).build();
         }
 
-        catch (RuntimeException e){
+        catch (Exception e){
             return Response.status(Response.Status.NO_CONTENT).build();
         }
     }
@@ -40,11 +44,19 @@ public class PokePersonalResource {
     public Response listToPersonalBd() {
 
         try{
-            return Response.ok(pokemonPersonalService.listPersonalBd()).build();
+            List<PokemonForList> lista = pokemonPersonalService.listPersonalBd();
+            if(lista != null) {
+                return Response.ok(lista).build();
+            }
+            else{
+                return Response.status(Response.Status.NO_CONTENT).build();
+            }
         }
-
-        catch (RuntimeException e){
-            return Response.status(Response.Status.NO_CONTENT).build();
+//        catch (MongoException m){
+//            return Response.status(Response.Status.NO_CONTENT).build();
+//        }
+        catch (Exception e){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -57,7 +69,7 @@ public class PokePersonalResource {
             return Response.ok().build();
         }
 
-        catch (RuntimeException e){
+        catch (Exception e){
             return Response.status(Response.Status.NO_CONTENT).build();
         }
     }
@@ -70,7 +82,7 @@ public class PokePersonalResource {
         try {
             return Response.ok().build();
         }
-        catch (RuntimeException e){
+        catch (Exception e){
             return Response.status(Response.Status.NO_CONTENT).build();
         }
     }
@@ -83,7 +95,7 @@ public class PokePersonalResource {
         try {
             return Response.ok().build();
         }
-        catch (RuntimeException e){
+        catch (Exception e){
             return Response.status(Response.Status.NO_CONTENT).build();
         }
     }
@@ -96,7 +108,7 @@ public class PokePersonalResource {
         try {
             return Response.ok().build();
         }
-        catch (RuntimeException e){
+        catch (Exception e){
             return Response.status(Response.Status.NO_CONTENT).build();
         }
     }

@@ -1,10 +1,10 @@
 package com.pokeapi.infrastructure.services;
 
+import com.mongodb.MongoException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Updates;
 import com.pokeapi.domain.entities.*;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -45,9 +45,9 @@ public class PokemonPersonalService {
     public List<PokemonDetail> listDetailId(String id) {
         List<PokemonDetail> pokemonDetails = new ArrayList<>();
         MongoCursor<Document> cursor = getCollection().find().iterator();
-        Long queryId = getCollection().countDocuments(getId(id));
+        long queryId = getCollection().countDocuments(getId(id));
 
-        if (queryId.toString().equals(EXIST_BD.toString())) {
+        if (Long.toString(queryId).equals(EXIST_BD.toString())) {
             try {
                 while (cursor.hasNext()) {
                     Document document = cursor.next();
@@ -63,12 +63,12 @@ public class PokemonPersonalService {
 
                     if(document.getString("id").equals(id)) {
                         pokemonDetails.add(pokemonDetail);
-                        LOG.info(String.format("get detailed Pokémons Personal"));
+                        LOG.info("get detailed Pokémons Personal");
                     }
                 }
             }
-            catch (RuntimeException e){
-                LOG.info(String.format("Error in get Pokémons"));
+            catch (Exception e){
+                LOG.info("Error in get Pokémons");
             }
             finally {
                 cursor.close();
@@ -76,14 +76,14 @@ public class PokemonPersonalService {
             return pokemonDetails;
         }
         else{
-            LOG.info(String.format("This Pokémon doesn't exist"));
+            LOG.info("This Pokémon doesn't exist");
             return null;
         }
     }
     public List<PokemonForList> listPersonalBd() {
         List<PokemonForList> listPersonalBd = new ArrayList<>();
         MongoCursor<Document> cursor = getCollection().find().iterator();
-        Long queryList = getCollection().countDocuments(getList());
+        long queryList = getCollection().countDocuments(getList());
 
         if (queryList >= EXIST_BD) {
             try {
@@ -95,11 +95,11 @@ public class PokemonPersonalService {
 
                     listPersonalBd.add(pokemonForList);
                 }
-                LOG.info(String.format("get Pokémons list Personal"));
+                LOG.info("get Pokémons list Personal");
                 return listPersonalBd;
             }
-            catch (RuntimeException e){
-                LOG.info(String.format("Error in List Pokémons"));
+            catch (Exception e){
+                LOG.info("Error in List Pokémons");
                 return null;
             }
             finally {
@@ -107,17 +107,17 @@ public class PokemonPersonalService {
             }
         }
         else {
-            LOG.info(String.format("This Pokémon list doesn't exist"));
+            LOG.info("This Pokémon list doesn't exist");
             return null;
+            //throw new MongoException("deu ruim");
         }
     }
 
     public void add (PokemonDetail pokemonDetail, String id) {
-        Long queryId = getCollection().countDocuments(getId(id));
+        long queryId = getCollection().countDocuments(getId(id));
 
         if (queryId < (EXIST_BD)) {
             try {
-                //String uuid = UUID.randomUUID().toString(); caso fosse uuid
                 Document document = new Document()
                         .append("id", id)
                         .append("height", pokemonDetail.getHeight())
@@ -128,20 +128,19 @@ public class PokemonPersonalService {
                         .append("abilities", pokemonDetail.getAbilities())
                         .append("sprites", pokemonDetail.getSprites());
                 getCollection().insertOne(document);
-                LOG.info(String.format("added pokemon"));
+                LOG.info("added pokemon");
             }
-            catch (RuntimeException e){
-                LOG.info(String.format("Error in add Pokémons"));
+            catch (Exception e){
+                LOG.info("Error in add Pokémons");
             }
         }
         else{
-            LOG.info(String.format("Error this id already exists"));
+            LOG.info("Error this id already exists");
         }
-
     }
 
     public void delete(String id) {
-        Long queryId = getCollection().countDocuments(getId(id));
+        long queryId = getCollection().countDocuments(getId(id));
 
         if (queryId >= (EXIST_BD)) {
             try {
@@ -150,39 +149,36 @@ public class PokemonPersonalService {
                 getCollection().deleteOne(document);
                 LOG.info(String.format("deleted pokemon id: %s", id));
             }
-            catch (RuntimeException e){
-                LOG.info(String.format("Error in delete one Pokémon"));
+            catch (Exception e){
+                LOG.info("Error in delete one Pokémon");
             }
         }
         else{
-            LOG.info(String.format("Error this id does not exists"));
+            LOG.info("Error this id does not exists");
         }
     }
 
     public void deleteAll() {
-        Long queryList = getCollection().countDocuments(getList());
+        long queryList = getCollection().countDocuments(getList());
 
         if (queryList >= (EXIST_BD)) {
             try {
-                Document document = new Document();
                 getCollection().drop();
-                LOG.info(String.format("Deleted all Pokémons"));
+                LOG.info("Deleted all Pokémons");
             }
-            catch (RuntimeException e){
-                LOG.info(String.format("Error in delete all Pokémons"));
+            catch (Exception e){
+                LOG.info("Error in delete all Pokémons");
             }
         }
         else{
-            LOG.info(String.format("there is no Pokémons"));
+            LOG.info("there is no Pokémons");
         }
     }
 
-    public List<PokemonDetail> update(PokemonDetail pokemonDetail, String id) {
-        List<PokemonDetail> update = new ArrayList<>();
-        MongoCursor<Document> cursor = getCollection().find().iterator();
-        Long queryId = getCollection().countDocuments(getId(id));
+    public void update(PokemonDetail pokemonDetail, String id) {
+        long queryId = getCollection().countDocuments(getId(id));
 
-        if (queryId.toString().equals(EXIST_BD.toString())) {
+        if (Long.toString(queryId).equals(EXIST_BD.toString())) {
             try {
                 Document document = new Document()
                         .append("id", id);
@@ -199,18 +195,12 @@ public class PokemonPersonalService {
                 getCollection().insertOne(document);
 
                 LOG.info(String.format("Pokémon id: %s has been updated", id));
-                return update;
-            } catch (RuntimeException e) {
-                LOG.info(String.format("Error in update Pokémons"));
-                return null;
-            }
-            finally {
-                cursor.close();
+            } catch (Exception e) {
+                LOG.info("Error in update Pokémons");
             }
         }
         else {
-            LOG.info(String.format("Error update, this id does not exists"));
-            return null;
+            LOG.info("Error update, this id does not exists");
         }
     }
 }

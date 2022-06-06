@@ -5,6 +5,10 @@ public class PokemonForList {
     private String name;
     private String url;
 
+    public PokemonForList() {
+
+    }
+
     public String getName() {
         return name;
     }
@@ -20,5 +24,4 @@ public class PokemonForList {
     public void setUrl(String url) {
         this.url = url;
     }
-
 }

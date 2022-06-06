@@ -1,7 +1,6 @@
 package com.pokeapi.infrastructure.services;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.Dependent;
 
 @ApplicationScoped
 public class ViaPokemonDetailService extends AbstractPokemonOficialDetailService {
