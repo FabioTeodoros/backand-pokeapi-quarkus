@@ -4,5 +4,5 @@ import com.pokeapi.domain.entities.PokemonList;
 
 public interface PokemonOficialAllPokemonService {
 
-     PokemonList getAll();
+     PokemonList officialList(String model);
 }

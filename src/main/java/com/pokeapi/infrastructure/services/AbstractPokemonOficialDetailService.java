@@ -1,6 +1,8 @@
 package com.pokeapi.infrastructure.services;
 
 import com.pokeapi.domain.entities.PokemonDetail;
+import com.pokeapi.resource.exceptions.InvalidRequestException;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
@@ -11,6 +13,8 @@ public abstract class AbstractPokemonOficialDetailService implements PokemonOfic
     private static final Logger LOG = Logger.getLogger(AbstractPokemonOficialDetailService.class.getName());
     private final WebTarget target;
     private final String dominio;
+    final static String PERSONAL = "personal";
+    final static String OFFICIAL = "official";
 
     public AbstractPokemonOficialDetailService(String dominio) {
         this.dominio = insertTraillingSlash(dominio);
@@ -26,8 +30,8 @@ public abstract class AbstractPokemonOficialDetailService implements PokemonOfic
 
     @Override
     public PokemonDetail buscaPokemonDetail(String id){
-        LOG.info(String.format("Buscando Pokemon id %s no site %s",id, dominio));
-        return target.path(buildPath(id)).request().get(PokemonDetail.class);
-    }
+            LOG.info(String.format("Buscando Pokemon id %s no site %s", id, dominio));
+            return target.path(buildPath(id)).request().get(PokemonDetail.class);
+        }
 
 }
