@@ -1,10 +1,10 @@
 package com.pokeapi.resource;
 
-import com.mongodb.MongoException;
 import com.pokeapi.domain.entities.PokemonDetail;
-import com.pokeapi.infrastructure.services.PokemonOficialAllPokemonService;
+import com.pokeapi.infrastructure.services.PokemonOficialListService;
 import com.pokeapi.infrastructure.services.PokemonOficialDetailService;
 import com.pokeapi.infrastructure.services.PokemonPersonalService;
+import com.pokeapi.resource.validations.GetCheckinCommandByType;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -17,20 +17,24 @@ public class PokemonResource {
     @Inject
     public PokemonResource(
             final PokemonPersonalService pokemonPersonalService,
-            final PokemonOficialAllPokemonService pokemonOficialAllPokemonService,
-            final PokemonOficialDetailService pokemonOficialDetailService
+            final PokemonOficialListService pokemonOficialListService,
+            final PokemonOficialDetailService pokemonOficialDetailService,
+            final GetCheckinCommandByType getCheckinCommandByType
     ){
-        this.pokemonOficialAllPokemonService = pokemonOficialAllPokemonService;
+        this.pokemonOficialListService = pokemonOficialListService;
         this.pokemonPersonalService = pokemonPersonalService;
         this.pokemonOficialDetailService = pokemonOficialDetailService;
+        this.getCheckinCommandByType = getCheckinCommandByType;
     }
 
     @Inject
-    PokemonOficialAllPokemonService pokemonOficialAllPokemonService;
+    PokemonOficialListService pokemonOficialListService;
     @Inject
     PokemonPersonalService pokemonPersonalService;
     @Inject
     PokemonOficialDetailService pokemonOficialDetailService;
+    @Inject
+    GetCheckinCommandByType getCheckinCommandByType;
 
     @Path("/official/{id}")
     @GET
@@ -47,9 +51,9 @@ public class PokemonResource {
     @Path("/list")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response pokemonOfficialList(@QueryParam("model")String model) {
+    public Response pokemonList(@QueryParam("model") String model) {
         try{
-            return Response.ok().entity(pokemonOficialAllPokemonService.officialList(model)).build();
+            return Response.ok().entity(getCheckinCommandByType.checkList(model)).build();
         } catch (Exception e){
             return Response.status(Response.Status.NO_CONTENT).build();
         }
@@ -57,41 +61,13 @@ public class PokemonResource {
 
     @Path("/personal/{id}")
     @GET
-    public Response pokemonPersonalDetailId(@PathParam("id") final String id){
+    public Response pokemonPersonalDetailId(@PathParam("id")String id){
         try {
             return Response.ok(pokemonPersonalService.PokemonDetailIdPersonal(id)).build();
         } catch (Exception e){
             return Response.status(Response.Status.NO_CONTENT).build();
         }
     }
-
-    @Path("/list")
-    @GET
-    public Response pokemonPersonalList(@QueryParam("model")String model) {
-        try{
-            return Response.ok(pokemonPersonalService.pokemonListPersonal(model)).build();
-        } catch (MongoException m){
-            return Response.status(Response.Status.NO_CONTENT).build();
-        } catch (Exception e){
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-//    @Path("/list")
-//    @GET
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public Object pokemonAllList(String model) {
-//
-//        try {
-//            List<PokemonForList> listaPersonal = pokemonPersonalService.pokemonListPersonal(model);
-//            PokemonList listaOficial = pokemonOficialAllPokemonService.officialList(model);
-//            Object[] resultList = new Object[]{listaPersonal, listaOficial};
-//            return Response.ok(resultList).build();
-//        } catch (Exception e){
-//            return Response.status(Response.Status.NO_CONTENT).build();
-//        }
-//    }
 
     @Path("/personal")
     @POST

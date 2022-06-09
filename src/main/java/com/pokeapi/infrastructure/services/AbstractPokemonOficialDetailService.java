@@ -13,8 +13,6 @@ public abstract class AbstractPokemonOficialDetailService implements PokemonOfic
     private static final Logger LOG = Logger.getLogger(AbstractPokemonOficialDetailService.class.getName());
     private final WebTarget target;
     private final String dominio;
-    final static String PERSONAL = "personal";
-    final static String OFFICIAL = "official";
 
     public AbstractPokemonOficialDetailService(String dominio) {
         this.dominio = insertTraillingSlash(dominio);

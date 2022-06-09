@@ -2,12 +2,12 @@ package com.pokeapi.domain.entities;
 
 import java.util.List;
 
-public class PokemonList {
+public class PokemonResponseList {
 
     private String count;
-    private List<PokemonForList> results;
+    private List<PokemonResponse> results;
 
-    public PokemonList() {
+    public PokemonResponseList() {
     }
 
     public String getCount() {
@@ -18,11 +18,11 @@ public class PokemonList {
         this.count = count;
     }
 
-    public List<PokemonForList> getResults() {
+    public List<PokemonResponse> getResults() {
         return results;
     }
 
-    public void setResults(List<PokemonForList> results) {
+    public void setResults(List<PokemonResponse>results) {
         this.results = results;
     }
 }

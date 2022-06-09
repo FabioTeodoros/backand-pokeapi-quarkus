@@ -1,12 +1,13 @@
 package com.pokeapi.domain.entities;
 
-public class PokemonForList {
+public class PokemonResponse {
 
     private String name;
     private String url;
 
-    public PokemonForList() {
-
+    public PokemonResponse() {
+        this.name = null;
+        this.url = null;
     }
 
     public String getName() {

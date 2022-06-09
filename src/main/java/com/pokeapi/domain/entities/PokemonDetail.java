@@ -6,14 +6,14 @@ import java.util.List;
 
 public class PokemonDetail {
 
-    private String id;
+    private Integer id;
     private String height;
     private String weight;
     private String name;
     private String baseExperience;
-    private List <TypeOfType> types;
-    private List <AbilitiesOfAbility> abilities;
-    private Sprite sprites;
+    private List <PokemonTypes> types;
+    private List <AttributesAbility> abilities;
+    private PokemonSprites sprites;
 
     public PokemonDetail() {
     }
@@ -55,36 +55,35 @@ public class PokemonDetail {
         this.baseExperience = baseExperience;
     }
 
-    public List<TypeOfType> getTypes() {
+    public List<PokemonTypes> getTypes() {
         return types;
     }
 
-    public void setTypes(List<TypeOfType> types) {
+    public void setTypes(List<PokemonTypes> types) {
         this.types = types;
     }
 
-    public List<AbilitiesOfAbility> getAbilities() {
+    public List<AttributesAbility> getAbilities() {
         return abilities;
     }
 
-    public void setAbilities(List<AbilitiesOfAbility> abilities) {
+    public void setAbilities(List<AttributesAbility> abilities) {
         this.abilities = abilities;
     }
 
-    public Sprite getSprites() {
+    public PokemonSprites getSprites() {
         return sprites;
     }
 
-    public void setSprites(Sprite sprites) {
+    public void setSprites(PokemonSprites sprites) {
         this.sprites = sprites;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
-
 }

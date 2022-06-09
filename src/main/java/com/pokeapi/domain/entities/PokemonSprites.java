@@ -2,18 +2,18 @@ package com.pokeapi.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Sprite {
+public class PokemonSprites {
 
     private String spriteFrontDefault;
-    private SpriteDreamWorld spriteDreamWorld;
+    private AttributesSpriteBigPicture attributesSpriteBigPicture;
 
     @JsonProperty("other")
-    public SpriteDreamWorld getSpriteDreamWorld() {
-        return spriteDreamWorld;
+    public AttributesSpriteBigPicture getSpriteDreamWorld() {
+        return attributesSpriteBigPicture;
     }
 
-    public void setSpriteDreamWorld(SpriteDreamWorld spriteDreamWorld) {
-        this.spriteDreamWorld = spriteDreamWorld;
+    public void setSpriteDreamWorld(AttributesSpriteBigPicture attributesSpriteBigPicture) {
+        this.attributesSpriteBigPicture = attributesSpriteBigPicture;
     }
 
     @JsonProperty("front_default")

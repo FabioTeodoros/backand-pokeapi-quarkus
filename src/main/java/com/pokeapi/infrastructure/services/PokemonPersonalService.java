@@ -6,6 +6,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.pokeapi.domain.entities.*;
+import com.pokeapi.enums.PokemonModel;
 import com.pokeapi.resource.exceptions.InvalidRequestException;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -22,7 +23,6 @@ import java.util.logging.Logger;
 public class PokemonPersonalService {
 
     final static Integer EXIST_BD = 1;
-    final static String PERSONAL = "personal";
 
     private MongoCollection getCollection() {
         return mongoClient.getDatabase("pokemonPersonal").getCollection("pokemonPersonal");
@@ -55,13 +55,13 @@ public class PokemonPersonalService {
                     while (cursor.hasNext()) {
                         Document document = cursor.next();
                         PokemonDetail pokemonDetail = new PokemonDetail();
-                        pokemonDetail.setId(document.getString("id"));
+                        pokemonDetail.setId(document.getInteger("id"));
                         pokemonDetail.setHeight(document.getString("height"));
                         pokemonDetail.setWeight(document.getString("weight"));
                         pokemonDetail.setName(document.getString("name"));
                         pokemonDetail.setBaseExperience(document.getString("base_experience"));
-                        pokemonDetail.setTypes((List<TypeOfType>) document.get("types"));
-                        pokemonDetail.setAbilities((List<AbilitiesOfAbility>) document.get("abilities"));
+                        pokemonDetail.setTypes((List<PokemonTypes>) document.get("types"));
+                        pokemonDetail.setAbilities((List<AttributesAbility>) document.get("abilities"));
                         //pokemonDetail.setSprites((Sprite) document.get("sprites"));
 
                         if (document.getString("id").equals(id)) {
@@ -80,21 +80,19 @@ public class PokemonPersonalService {
             return null;
         }
     }
-    public List<PokemonForList> pokemonListPersonal(String model) {
-        List<PokemonForList> listPersonal = new ArrayList<>();
-        MongoCursor<Document> cursor = getCollection().find().iterator();
-        long queryList = getCollection().countDocuments(getList());
-
-        if (queryList >= EXIST_BD) {
-            if (model.equals(PERSONAL)) {
+    public List<PokemonResponse> pokemonListPersonal(String model) {
+        List<PokemonResponse> listPersonal = new ArrayList<>();
+        if (model.equals(PokemonModel.PERSONAL.getDescricao())) {
+            MongoCursor<Document> cursor = getCollection().find().iterator();
+            long queryList = getCollection().countDocuments(getList());
+            if (queryList >= EXIST_BD) {
                 try {
                     while (cursor.hasNext()) {
                         Document document = cursor.next();
-                        PokemonForList pokemonForList = new PokemonForList();
-                        pokemonForList.setName(document.getString("name"));
-                        pokemonForList.setUrl(document.getString("url"));
-
-                        listPersonal.add(pokemonForList);
+                        PokemonResponse pokemonResponse = new PokemonResponse();
+                        pokemonResponse.setName(document.getString("name"));
+                        pokemonResponse.setUrl(document.getString("url"));
+                        listPersonal.add(pokemonResponse);
                     }
                     LOG.info("get Pokémons list Personal");
                     return listPersonal;
@@ -116,7 +114,6 @@ public class PokemonPersonalService {
     public void pokemonPersonalCreate(PokemonDetail pokemonDetail) {
         String uuid = UUID.randomUUID().toString();
         long queryId = getCollection().countDocuments(getId(uuid));
-
         if (queryId < (EXIST_BD)) {
             try {
                 Document document = new Document()
@@ -140,7 +137,6 @@ public class PokemonPersonalService {
 
     public void pokemonPersonalDelete(String id) {
         long queryId = getCollection().countDocuments(getId(id));
-
         if (queryId >= (EXIST_BD)) {
             try {
                 Document document = new Document()
@@ -157,7 +153,6 @@ public class PokemonPersonalService {
 
     public void pokemonPersonalDeleteAll() {
         long queryList = getCollection().countDocuments(getList());
-
         if (queryList >= (EXIST_BD)) {
             try {
                 getCollection().drop();
@@ -173,7 +168,6 @@ public class PokemonPersonalService {
     public void pokemonPersonalUptade(PokemonDetail pokemonDetail, String id) {
         String uuid = UUID.randomUUID().toString();
         long queryId = getCollection().countDocuments(getId(id));
-
         if (Long.toString(queryId).equals(EXIST_BD.toString())) {
             try {
                 Document document = new Document()

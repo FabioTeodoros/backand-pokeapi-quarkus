@@ -1,6 +1,6 @@
 package com.pokeapi.domain.entities;
 
-public class TypePokemon {
+public class PokemonAbility {
 
     private String name;
 
@@ -12,3 +12,4 @@ public class TypePokemon {
         this.name = name;
     }
 }
+
