@@ -1,6 +1,6 @@
 package com.pokeapi.domain.entities;
 
-public class AttributesType {
+public class PokemonType {
 
     private String name;
 

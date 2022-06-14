@@ -2,13 +2,17 @@ package com.pokeapi.domain.entities;
 
 public class PokemonTypes {
 
-    private AttributesType type;
+    public PokemonTypes() {
 
-    public AttributesType getType() {
+    }
+
+    private PokemonType type;
+
+    public PokemonType getType() {
         return type;
     }
 
-    public void setType(AttributesType type) {
+    public void setType(PokemonType type) {
         this.type = type;
     }
 }

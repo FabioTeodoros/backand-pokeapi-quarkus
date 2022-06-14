@@ -2,7 +2,7 @@ package com.pokeapi.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class AttributesSpriteSmallPicture {
+public class PokemonSmallImage {
 
     private String frontDefault;
 

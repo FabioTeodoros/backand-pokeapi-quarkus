@@ -2,25 +2,22 @@ package com.pokeapi.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class PokemonFull {
+public class PokemonFullContract {
 
-    private Integer id;
+    private String id;
     private String model;
     private String name;
     private String urlImage;
 
-    public PokemonFull() {
-        this.id = null;
-        this.model = null;
-        this.name = null;
-        this.urlImage = null;
+    public PokemonFullContract() {
+
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

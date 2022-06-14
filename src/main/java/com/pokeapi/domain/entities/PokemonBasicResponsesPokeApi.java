@@ -2,14 +2,13 @@ package com.pokeapi.domain.entities;
 
 import java.util.List;
 
-public class PokemonFullList {
+public class PokemonBasicResponsesPokeApi {
 
     private Integer count;
-    private List<PokemonFull> results;
+    private List<PokemonBasicResponsePokeApi> results;
 
-    public PokemonFullList() {
-        this.count = null;
-        this.results = null;
+    public PokemonBasicResponsesPokeApi() {
+
     }
 
     public Integer getCount() {
@@ -20,11 +19,11 @@ public class PokemonFullList {
         this.count = count;
     }
 
-    public List<PokemonFull> getResults() {
+    public List<PokemonBasicResponsePokeApi> getResults() {
         return results;
     }
 
-    public void setResults(List<PokemonFull> results) {
+    public void setResults(List<PokemonBasicResponsePokeApi>results) {
         this.results = results;
     }
 }

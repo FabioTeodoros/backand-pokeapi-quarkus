@@ -1,8 +1,7 @@
-package com.pokeapi.infrastructure.services;
+package com.pokeapi.infrastructure.gateway;
 
 import com.pokeapi.domain.entities.PokemonDetail;
 
-public interface PokemonOficialDetailService {
-
+public interface PokemonOfficialDetailService {
      PokemonDetail buscaPokemonDetail(String id);
 }

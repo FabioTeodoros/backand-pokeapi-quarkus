@@ -1,10 +1,12 @@
 package com.pokeapi.resource;
 
+import com.mongodb.MongoException;
 import com.pokeapi.domain.entities.PokemonDetail;
-import com.pokeapi.infrastructure.services.PokemonOficialListService;
-import com.pokeapi.infrastructure.services.PokemonOficialDetailService;
-import com.pokeapi.infrastructure.services.PokemonPersonalService;
-import com.pokeapi.resource.validations.GetCheckinCommandByType;
+import com.pokeapi.resource.exceptions.InvalidRequestException;
+import com.pokeapi.service.PokemonFullContractService;
+import com.pokeapi.infrastructure.gateway.PokemonOficialListService;
+import com.pokeapi.infrastructure.gateway.PokemonOfficialDetailService;
+import com.pokeapi.infrastructure.mongodb.repositories.PokemonPersonalRepository;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -16,25 +18,24 @@ public class PokemonResource {
 
     @Inject
     public PokemonResource(
-            final PokemonPersonalService pokemonPersonalService,
             final PokemonOficialListService pokemonOficialListService,
-            final PokemonOficialDetailService pokemonOficialDetailService,
-            final GetCheckinCommandByType getCheckinCommandByType
-    ){
+            final PokemonPersonalRepository pokemonPersonalRepository,
+            final PokemonOfficialDetailService pokemonOfficialDetailService,
+            final PokemonFullContractService pokemonFullContractService){
         this.pokemonOficialListService = pokemonOficialListService;
-        this.pokemonPersonalService = pokemonPersonalService;
-        this.pokemonOficialDetailService = pokemonOficialDetailService;
-        this.getCheckinCommandByType = getCheckinCommandByType;
+        this.pokemonPersonalRepository = pokemonPersonalRepository;
+        this.pokemonOfficialDetailService = pokemonOfficialDetailService;
+        this.pokemonFullContractService = pokemonFullContractService;
     }
 
     @Inject
     PokemonOficialListService pokemonOficialListService;
     @Inject
-    PokemonPersonalService pokemonPersonalService;
+    PokemonPersonalRepository pokemonPersonalRepository;
     @Inject
-    PokemonOficialDetailService pokemonOficialDetailService;
+    PokemonOfficialDetailService pokemonOfficialDetailService;
     @Inject
-    GetCheckinCommandByType getCheckinCommandByType;
+    PokemonFullContractService pokemonFullContractService;
 
     @Path("/official/{id}")
     @GET
@@ -42,9 +43,9 @@ public class PokemonResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response pokemonDetailOfficialId(@PathParam("id") final String id){
         try{
-            return Response.ok().entity(pokemonOficialDetailService.buscaPokemonDetail(id)).build();
-        } catch (Exception e){
-            return Response.status(Response.Status.NO_CONTENT).build();
+            return Response.ok().entity(pokemonOfficialDetailService.buscaPokemonDetail(id)).build();
+        }catch (Exception exception){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -53,9 +54,15 @@ public class PokemonResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response pokemonList(@QueryParam("model") String model) {
         try{
-            return Response.ok().entity(getCheckinCommandByType.checkList(model)).build();
-        } catch (Exception e){
-            return Response.status(Response.Status.NO_CONTENT).build();
+            return Response.ok().entity(pokemonFullContractService.pokemonGetValidation(model)).build();
+        }catch (IllegalArgumentException illegalArgumentException){
+            return Response.status(Response.Status.NOT_FOUND).build();
+        } catch (MongoException mongoException){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }catch (InvalidRequestException invalidRequestException){
+            return Response.status(Response.Status.NOT_FOUND).build();
+        } catch (Exception exception){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -63,20 +70,24 @@ public class PokemonResource {
     @GET
     public Response pokemonPersonalDetailId(@PathParam("id")String id){
         try {
-            return Response.ok(pokemonPersonalService.PokemonDetailIdPersonal(id)).build();
-        } catch (Exception e){
-            return Response.status(Response.Status.NO_CONTENT).build();
+            return Response.ok(pokemonPersonalRepository.pokemonDetailIdPersonal(id)).build();
+        }catch (InvalidRequestException invalidRequestException){
+            return Response.status(Response.Status.NOT_FOUND).build();
+        } catch (Exception exception){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @Path("/personal")
     @POST
-    public Response pokemonPersonalAdd(PokemonDetail pokemonDetail) {
+    public Response pokemonPersonalCreate(PokemonDetail pokemonDetail) {
         try {
-            pokemonPersonalService.pokemonPersonalCreate(pokemonDetail);
-            return Response.ok().build();
-        } catch (Exception e){
-            return Response.status(Response.Status.NO_CONTENT).build();
+            pokemonPersonalRepository.pokemonPersonalCreate(pokemonDetail);
+            return Response.status(Response.Status.CREATED).build();
+        } catch (MongoException mongoException){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        } catch (Exception exception){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -84,21 +95,12 @@ public class PokemonResource {
     @DELETE
     public Response pokemonPersonalDeleteId(@PathParam("id") final String id)  {
         try {
-            pokemonPersonalService.pokemonPersonalDelete(id);
-            return Response.ok().build();
-        } catch (Exception e){
-            return Response.status(Response.Status.NO_CONTENT).build();
-        }
-    }
-
-    @Path("/personal/all")
-    @DELETE
-    public Response pokemonPersonalDeleteAll()  {
-        pokemonPersonalService.pokemonPersonalDeleteAll();
-        try {
-            return Response.ok().build();
-        } catch (Exception e){
-            return Response.status(Response.Status.NO_CONTENT).build();
+            pokemonPersonalRepository.pokemonPersonalDelete(id);
+            return Response.status(Response.Status.ACCEPTED).build();
+        } catch (MongoException mongoException){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        } catch (Exception exception){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -106,10 +108,12 @@ public class PokemonResource {
     @PUT
     public Response pokemonPersonalUpdateId(PokemonDetail pokemonDetail, String id) {
         try {
-            pokemonPersonalService.pokemonPersonalUptade(pokemonDetail, id);
-            return Response.ok().build();
-        } catch (Exception e){
-            return Response.status(Response.Status.NO_CONTENT).build();
+            pokemonPersonalRepository.pokemonPersonalUpdate(pokemonDetail, id);
+            return Response.status(Response.Status.ACCEPTED).build();
+        } catch (MongoException mongoException){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        } catch (Exception exception){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

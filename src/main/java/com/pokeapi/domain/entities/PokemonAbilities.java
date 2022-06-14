@@ -1,6 +1,10 @@
 package com.pokeapi.domain.entities;
 
-public class AttributesAbility {
+public class PokemonAbilities {
+
+    public PokemonAbilities() {
+
+    }
 
     private PokemonAbility ability;
 

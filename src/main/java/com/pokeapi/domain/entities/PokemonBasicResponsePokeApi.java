@@ -1,13 +1,21 @@
 package com.pokeapi.domain.entities;
 
-public class PokemonResponse {
+public class PokemonBasicResponsePokeApi {
 
+    private String id;
     private String name;
     private String url;
 
-    public PokemonResponse() {
-        this.name = null;
-        this.url = null;
+    public PokemonBasicResponsePokeApi() {
+
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
