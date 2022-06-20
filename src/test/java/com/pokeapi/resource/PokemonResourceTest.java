@@ -3,11 +3,10 @@ package com.pokeapi.resource;
 import com.mongodb.MongoException;
 import com.pokeapi.domain.entities.PokemonDetail;
 import com.pokeapi.domain.entities.PokemonFullContracts;
+import com.pokeapi.infrastructure.gateway.PokemonFullService;
 import com.pokeapi.infrastructure.gateway.PokemonOfficialDetailService;
-import com.pokeapi.infrastructure.gateway.PokemonOficialListService;
 import com.pokeapi.infrastructure.mongodb.repositories.PokemonPersonalRepository;
 import com.pokeapi.resource.exceptions.InvalidRequestException;
-import com.pokeapi.service.PokemonFullContractService;
 
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 
@@ -32,13 +31,11 @@ import java.util.List;
 class PokemonResourceTest {
 
     @Mock
-    private PokemonOficialListService pokemonOficialListService;
-    @Mock
     private PokemonPersonalRepository pokemonPersonalRepository;
     @Mock
     private PokemonOfficialDetailService pokemonOfficialDetailService;
     @Mock
-    private PokemonFullContractService pokemonFullContractService;
+    private PokemonFullService pokemonFullService;
     @InjectMocks
     private PokemonResource pokemonResource;
 
@@ -50,15 +47,14 @@ class PokemonResourceTest {
     @BeforeEach
     public void setup() {
         pokemonResource = new PokemonResource(
-                pokemonOficialListService
-                , pokemonPersonalRepository
+                pokemonPersonalRepository
                 , pokemonOfficialDetailService
-                , pokemonFullContractService);
+                , pokemonFullService);
     }
 
     @Nested
     @DisplayName("Given pokemonResource method")
-    class PokemonOfficialId {
+    class Pokemons {
         Response response;
 
         @Nested
@@ -102,10 +98,9 @@ class PokemonResourceTest {
             public void mockAndAct() {
                 String modelMock = "modelMock";
                 PokemonFullContracts pokemonFullContractsMock = new PokemonFullContracts();
-                doReturn(pokemonFullContractsMock).when(pokemonFullContractService).pokemonGetValidation(modelMock);
+                doReturn(pokemonFullContractsMock).when(pokemonFullService).pokemonGetValidation(modelMock);
                 response = pokemonResource.pokemonList(modelMock);
             }
-
             @Test
             @DisplayName("Then response status is success for pokemons list")
             void validateSuccessListPokemonsTest() {
@@ -120,7 +115,7 @@ class PokemonResourceTest {
             public void mockAndArt() {
                 String modelMock = "modelMock";
                 IllegalArgumentException exceptionMock = new IllegalArgumentException();
-                doThrow(exceptionMock).when(pokemonFullContractService).pokemonGetValidation(modelMock);
+                doThrow(exceptionMock).when(pokemonFullService).pokemonGetValidation(modelMock);
                 response = pokemonResource.pokemonList(modelMock);
             }
             @Test
@@ -137,7 +132,7 @@ class PokemonResourceTest {
             public void mockAndArt() {
                 String modelMock = "modelMock";
                 MongoException exceptionMock = new MongoException("");
-                doThrow(exceptionMock).when(pokemonFullContractService).pokemonGetValidation(modelMock);
+                doThrow(exceptionMock).when(pokemonFullService).pokemonGetValidation(modelMock);
                 response = pokemonResource.pokemonList(modelMock);
             }
             @Test
@@ -154,7 +149,7 @@ class PokemonResourceTest {
             public void mockAndArt() {
                 String modelMock = "modelMock";
                 InvalidRequestException exceptionMock = new InvalidRequestException("");
-                doThrow(exceptionMock).when(pokemonFullContractService).pokemonGetValidation(modelMock);
+                doThrow(exceptionMock).when(pokemonFullService).pokemonGetValidation(modelMock);
                 response = pokemonResource.pokemonList(modelMock);
             }
             @Test
@@ -171,7 +166,7 @@ class PokemonResourceTest {
             public void mockAndArt() {
                 String modelMock = "modelMock";
                 RuntimeException exceptionMock = new RuntimeException();
-                doThrow(exceptionMock).when(pokemonFullContractService).pokemonGetValidation(modelMock);
+                doThrow(exceptionMock).when(pokemonFullService).pokemonGetValidation(modelMock);
                 response = pokemonResource.pokemonList(modelMock);
             }
             @Test
@@ -337,7 +332,7 @@ class PokemonResourceTest {
             public void mockAndArt() {
                 String idMock = "idmock";
                 PokemonDetail pokemonDetailMock = new PokemonDetail();
-                response = pokemonResource.pokemonPersonalUpdateId(pokemonDetailMock,idMock);
+                response = pokemonResource.pokemonPersonalUpdateId(pokemonDetailMock, idMock);
             }
             @Test
             @DisplayName("Then the answer will be success for pokemon update")
@@ -345,6 +340,7 @@ class PokemonResourceTest {
                 assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatus());
             }
         }
+
         @Nested
         @DisplayName("When mongo exceptions occur for pokemon update")
         class FailMongoExceptionUpdatePokemonPersonal {
@@ -354,7 +350,7 @@ class PokemonResourceTest {
                 PokemonDetail pokemonDetailMock = new PokemonDetail();
                 MongoException exceptionMock = new MongoException("");
                 doThrow(exceptionMock).when(pokemonPersonalRepository).pokemonPersonalUpdate(pokemonDetailMock, idMock);
-                response = pokemonResource.pokemonPersonalUpdateId(pokemonDetailMock,idMock);
+                response = pokemonResource.pokemonPersonalUpdateId(pokemonDetailMock, idMock);
             }
             @Test
             @DisplayName("Then response is Internal error for Mongo exception for pokemon update")

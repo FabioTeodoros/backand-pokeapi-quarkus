@@ -10,10 +10,8 @@ import java.util.logging.Logger;
 
 public abstract class AbstractPokemonDetail implements PokemonOfficialDetailService {
 
-    private static final Logger LOG = Logger.getLogger(AbstractPokemonDetail.class.getName());
     private final WebTarget target;
     private final String dominio;
-
     private static final Logger LOGGER = Logger.getLogger(AbstractPokemonDetail.class.getName());
 
     public AbstractPokemonDetail(String dominio) {
@@ -27,7 +25,7 @@ public abstract class AbstractPokemonDetail implements PokemonOfficialDetailServ
     @Override
     public PokemonDetail buscaPokemonDetail(String id){
         try{
-            LOG.info(String.format("Buscando Pokemon id %s no site %s", id, dominio));
+            LOGGER.info(String.format("Buscando Pokemon id %s no site %s", id, dominio));
             return target.path(buildPath(id)).request().get(PokemonDetail.class);
         }
         catch (Exception exception){

@@ -24,7 +24,7 @@ public class PokemonPersonalRepository {
 
     final static Integer EXIST_BD = 1;
 
-    private MongoCollection getCollection() {
+    public MongoCollection getCollection() {
         return mongoClient.getDatabase("pokemonPersonal").getCollection("pokemonPersonal");
     }
 
@@ -32,7 +32,7 @@ public class PokemonPersonalRepository {
         this.mongoClient = mongoClient;
     }
 
-    private Bson getId(final String id){
+    public Bson getId(String id){
         return Filters.eq("id", id);
     }
 

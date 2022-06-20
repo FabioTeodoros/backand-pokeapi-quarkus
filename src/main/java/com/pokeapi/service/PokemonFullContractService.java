@@ -5,7 +5,8 @@ import com.pokeapi.domain.entities.PokemonFullContracts;
 import com.pokeapi.domain.entities.PokemonBasicResponsePokeApi;
 import com.pokeapi.domain.entities.PokemonBasicResponsesPokeApi;
 import com.pokeapi.domain.enums.PokemonModel;
-import com.pokeapi.infrastructure.gateway.PokemonOficialListService;
+import com.pokeapi.infrastructure.gateway.PokemonFullService;
+import com.pokeapi.infrastructure.gateway.PokemonOficialBasicService;
 import com.pokeapi.infrastructure.mongodb.repositories.PokemonPersonalRepository;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -16,31 +17,34 @@ import java.util.List;
 import java.util.logging.Logger;
 
 @ApplicationScoped
-public class PokemonFullContractService {
+public class PokemonFullContractService implements PokemonFullService {
 
     final static Integer OFFSET = 1;
-    final static String URL_IMAGE_OFFICIAL = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/{id}.svg";
+    final static Integer OFFSET_MAIOR = 10000;
+    final static Integer OFFSET_MENOR = 897;
+
+    final static String URL_IMAGE_OFFICIAL = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{id}.png";
     final static String URL_IMAGE_PERSONAL = "https://rickandmortyapi.com/api/character/avatar/{id}.jpeg";
     Logger LOGGER = Logger.getLogger(PokemonFullContractService.class.getName());
 
     public PokemonFullContractService(
-            PokemonOficialListService pokemonOficialListService,
+            PokemonOficialBasicService pokemonOficialBasicService,
             PokemonPersonalRepository pokemonPersonalRepository
     ) {
-        this.pokemonOficialListService = pokemonOficialListService;
+        this.pokemonOficialBasicService = pokemonOficialBasicService;
         this.pokemonPersonalRepository = pokemonPersonalRepository;
     }
 
     private static List<PokemonFullContract> resultAll = null;
 
     @Inject
-    PokemonOficialListService pokemonOficialListService;
+    PokemonOficialBasicService pokemonOficialBasicService;
     @Inject
     PokemonPersonalRepository pokemonPersonalRepository;
 
-    private PokemonFullContracts getPokemonOfficial() {
+    public PokemonFullContracts getPokemonOfficial() {
         try {
-            PokemonBasicResponsesPokeApi responseOfficial = pokemonOficialListService.officialList();
+            PokemonBasicResponsesPokeApi responseOfficial = pokemonOficialBasicService.officialList();
             Integer countOfficial = responseOfficial.getCount();
             List<PokemonFullContract> resultOff = new ArrayList<>();
             PokemonFullContracts pokemonFullContracts = new PokemonFullContracts();
@@ -51,10 +55,15 @@ public class PokemonFullContractService {
             for (int index = 0; index < countOfficial; index++) {
                 newFull = new PokemonFullContract();
                 current = responseOfficial.getResults().get(index);
-                newFull.setId(String.valueOf((index + OFFSET)));
                 newFull.setName(current.getName());
-                newFull.setUrlImage(URL_IMAGE_OFFICIAL.replace("{id}", Integer.toString(index + OFFSET)));
                 newFull.setModel(PokemonModel.OFFICIAL.getDescriptor());
+                if (index <= OFFSET_MENOR){
+                    newFull.setId(String.valueOf((index + OFFSET)));
+                    newFull.setUrlImage(URL_IMAGE_OFFICIAL.replace("{id}", Integer.toString(index + OFFSET)));
+                } else {
+                    newFull.setId(String.valueOf(((OFFSET_MAIOR - OFFSET_MENOR)+index)));
+                    newFull.setUrlImage(URL_IMAGE_OFFICIAL.replace("{id}", Integer.toString((OFFSET_MAIOR - OFFSET_MENOR)+index)));
+                }
                 resultOff.add(newFull);
                 resultAll.add(newFull);
             }
@@ -68,7 +77,7 @@ public class PokemonFullContractService {
         }
     }
 
-    private PokemonFullContracts getPokemonPersonal(String model) {
+    public PokemonFullContracts getPokemonPersonal(String model) {
         try {
             PokemonBasicResponsesPokeApi responsePersonal = pokemonPersonalRepository.pokemonListPersonal(model);
             Integer countPersonal = responsePersonal.getCount();
@@ -100,7 +109,7 @@ public class PokemonFullContractService {
         }
     }
 
-    private PokemonFullContracts getPokemonAll(String model) {
+    public PokemonFullContracts getPokemonAll(String model) {
         try {
             PokemonFullContracts pokemonFullContracts = new PokemonFullContracts();
             Integer countOfficial = getPokemonOfficial().getCount();
