@@ -1,6 +1,8 @@
 package com.pokeapi.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.bson.codecs.pojo.annotations.BsonId;
+import org.bson.codecs.pojo.annotations.BsonProperty;
 
 import java.util.List;
 
