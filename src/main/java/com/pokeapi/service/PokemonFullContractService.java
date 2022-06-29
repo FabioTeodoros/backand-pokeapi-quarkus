@@ -2,7 +2,7 @@ package com.pokeapi.service;
 
 import com.pokeapi.domain.entities.PokemonFullContract;
 import com.pokeapi.domain.entities.PokemonFullContracts;
-import com.pokeapi.domain.entities.PokemonBasicResponsePokeApi;
+import com.pokeapi.domain.entities.PokemonBasicResponse;
 import com.pokeapi.domain.entities.PokemonBasicResponsesPokeApi;
 import com.pokeapi.domain.enums.PokemonModel;
 import com.pokeapi.infrastructure.gateway.PokemonFullService;
@@ -17,15 +17,14 @@ import java.util.List;
 import java.util.logging.Logger;
 
 @ApplicationScoped
-public class PokemonFullContractService implements PokemonFullService {
+public class  PokemonFullContractService implements PokemonFullService {
 
     final static Integer OFFSET = 1;
-    final static Integer OFFSET_MAIOR = 10000;
-    final static Integer OFFSET_MENOR = 897;
-
+    final static Integer OFFSET_BIG = 10000;
+    final static Integer OFFSET_SMALL = 897;
     final static String URL_IMAGE_OFFICIAL = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{id}.png";
     final static String URL_IMAGE_PERSONAL = "https://rickandmortyapi.com/api/character/avatar/{id}.jpeg";
-    Logger LOGGER = Logger.getLogger(PokemonFullContractService.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(PokemonFullContractService.class.getName());
 
     public PokemonFullContractService(
             PokemonOficialBasicService pokemonOficialBasicService,
@@ -35,8 +34,6 @@ public class PokemonFullContractService implements PokemonFullService {
         this.pokemonPersonalRepository = pokemonPersonalRepository;
     }
 
-    private static List<PokemonFullContract> resultAll = null;
-
     @Inject
     PokemonOficialBasicService pokemonOficialBasicService;
     @Inject
@@ -44,47 +41,46 @@ public class PokemonFullContractService implements PokemonFullService {
 
     public PokemonFullContracts getPokemonOfficial() {
         try {
-            PokemonBasicResponsesPokeApi responseOfficial = pokemonOficialBasicService.officialList();
-            Integer countOfficial = responseOfficial.getCount();
-            List<PokemonFullContract> resultOff = new ArrayList<>();
-            PokemonFullContracts pokemonFullContracts = new PokemonFullContracts();
-            resultAll = new ArrayList<>();
-            PokemonBasicResponsePokeApi current;
-            PokemonFullContract newFull;
+             PokemonBasicResponsesPokeApi responseOfficial = pokemonOficialBasicService.officialList();
+             Integer countOfficial = responseOfficial.getCount();
+             List<PokemonFullContract> resultOfficial = new ArrayList<>();
+             PokemonFullContracts pokemonFullContracts = new PokemonFullContracts();
+             PokemonBasicResponse current;
+             PokemonFullContract newFull;
 
             for (int index = 0; index < countOfficial; index++) {
                 newFull = new PokemonFullContract();
                 current = responseOfficial.getResults().get(index);
-                newFull.setName(current.getName());
+                newFull.setName(current.getName()); //verificar como fazer isso.
                 newFull.setModel(PokemonModel.OFFICIAL.getDescriptor());
-                if (index <= OFFSET_MENOR){
+                if (index <= OFFSET_SMALL){
                     newFull.setId(String.valueOf((index + OFFSET)));
-                    newFull.setUrlImage(URL_IMAGE_OFFICIAL.replace("{id}", Integer.toString(index + OFFSET)));
+                    newFull.setUrlImage(URL_IMAGE_OFFICIAL.replace("{id}",
+                            Integer.toString(index + OFFSET)));
                 } else {
-                    newFull.setId(String.valueOf(((OFFSET_MAIOR - OFFSET_MENOR)+index)));
-                    newFull.setUrlImage(URL_IMAGE_OFFICIAL.replace("{id}", Integer.toString((OFFSET_MAIOR - OFFSET_MENOR)+index)));
+                    newFull.setId(String.valueOf(((OFFSET_BIG - OFFSET_SMALL)+index)));
+                    newFull.setUrlImage(URL_IMAGE_OFFICIAL.replace("{id}",
+                            Integer.toString((OFFSET_BIG - OFFSET_SMALL)+index)));
                 }
-                resultOff.add(newFull);
-                resultAll.add(newFull);
+                resultOfficial.add(newFull);
             }
-            pokemonFullContracts.setResults(resultOff);
-            pokemonFullContracts.setCount(resultOff.size());
-
+            pokemonFullContracts.setResults(resultOfficial);
+            pokemonFullContracts.setCount(resultOfficial.size());
+            LOGGER.info("Get pokemon Official is Success");
             return pokemonFullContracts;
         } catch (Exception exception){
             LOGGER.info("Error Service getPokemonOfficial");
-            throw exception;
+            return null;
         }
     }
 
     public PokemonFullContracts getPokemonPersonal(String model) {
         try {
-            PokemonBasicResponsesPokeApi responsePersonal = pokemonPersonalRepository.pokemonListPersonal(model);
+            PokemonBasicResponsesPokeApi responsePersonal = pokemonPersonalRepository.list(model);
             Integer countPersonal = responsePersonal.getCount();
             List<PokemonFullContract> resultPer = new ArrayList<>();
             PokemonFullContracts pokemonFullContracts = new PokemonFullContracts();
-            resultAll = new ArrayList<>();
-            PokemonBasicResponsePokeApi current;
+            PokemonBasicResponse current;
             PokemonFullContract newFull;
 
             for (int index = 0; index < countPersonal; index++) {
@@ -95,39 +91,39 @@ public class PokemonFullContractService implements PokemonFullService {
                 newFull.setModel(PokemonModel.PERSONAL.getDescriptor());
                 newFull.setUrlImage(URL_IMAGE_PERSONAL.replace("{id}", (Integer.toString(index + OFFSET))));
                 resultPer.add(newFull);
-                resultAll.add(newFull);
             }
-
             pokemonFullContracts.setResults(resultPer);
             pokemonFullContracts.setCount(resultPer.size());
-
+            LOGGER.info("Get pokemon Official is Success");
             return pokemonFullContracts;
         }
         catch (Exception exception){
             LOGGER.info("Error Service getPokemonPersonal");
-            throw exception;
+            return null;
         }
     }
 
     public PokemonFullContracts getPokemonAll(String model) {
         try {
             PokemonFullContracts pokemonFullContracts = new PokemonFullContracts();
-            Integer countOfficial = getPokemonOfficial().getCount();
-            Integer countPersonal = getPokemonPersonal(model).getCount();
-            List<PokemonFullContract> resultsPersonal = getPokemonPersonal(model).getResults();
-            List<PokemonFullContract> resultsOfficial = getPokemonOfficial().getResults();
+            PokemonFullContracts pokemonOfficial = this.getPokemonOfficial();
+            PokemonFullContracts pokemonPersonal = this.getPokemonPersonal(model);
+            Integer countOfficial = pokemonOfficial.getCount();
+            Integer countPersonal = pokemonPersonal.getCount();
+            List<PokemonFullContract> resultsOfficial = pokemonOfficial.getResults();
+            List<PokemonFullContract> resultsPersonal = pokemonPersonal.getResults();
             List<PokemonFullContract> resultsFull = new ArrayList<>();
             resultsFull.addAll(resultsPersonal);
             resultsFull.addAll(resultsOfficial);
 
             pokemonFullContracts.setCount(countOfficial + countPersonal);
             pokemonFullContracts.setResults(resultsFull);
-
+            LOGGER.info("Service getPokemonAll Success");
             return pokemonFullContracts;
         }
         catch (Exception exception){
-            LOGGER.info("Error Service setPokemonAll");
-            throw exception;
+            LOGGER.info("Error Service getPokemonAll" + exception);
+            return null;
         }
     }
     public PokemonFullContracts pokemonGetValidation(String model) {
@@ -143,7 +139,7 @@ public class PokemonFullContractService implements PokemonFullService {
         }
         catch (Exception exception){
             LOGGER.info("Error Service pokemonGetValidation");
-            throw exception;
+            return null;
         }
     }
 }

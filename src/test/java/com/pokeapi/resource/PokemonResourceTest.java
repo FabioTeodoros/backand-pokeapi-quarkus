@@ -183,7 +183,7 @@ class PokemonResourceTest {
             public void mockAndArt() {
                 String idMock = "idMock";
                 List<PokemonDetail> pokemonDetailMock = new ArrayList<>();
-                doReturn(pokemonDetailMock).when(pokemonPersonalRepository).pokemonDetailIdPersonal(idMock);
+                doReturn(pokemonDetailMock).when(pokemonPersonalRepository).id(idMock);
                 response = pokemonResource.pokemonPersonalDetailId(idMock);
             }
             @Test
@@ -200,7 +200,7 @@ class PokemonResourceTest {
             public void mockAndArt() {
                 String idMock = "idMock";
                 InvalidRequestException exceptionMock = new InvalidRequestException("");
-                doThrow(exceptionMock).when(pokemonPersonalRepository).pokemonDetailIdPersonal(idMock);
+                doThrow(exceptionMock).when(pokemonPersonalRepository).id(idMock);
                 response = pokemonResource.pokemonPersonalDetailId(idMock);
             }
             @Test
@@ -217,7 +217,7 @@ class PokemonResourceTest {
             public void mockAndArt() {
                 String idMock = "idMock";
                 RuntimeException exceptionMock = new RuntimeException("");
-                doThrow(exceptionMock).when(pokemonPersonalRepository).pokemonDetailIdPersonal(idMock);
+                doThrow(exceptionMock).when(pokemonPersonalRepository).id(idMock);
                 response = pokemonResource.pokemonPersonalDetailId(idMock);
             }
             @Test
@@ -249,7 +249,7 @@ class PokemonResourceTest {
             public void mockAndArt() {
                 PokemonDetail pokemonDetailMock = new PokemonDetail();
                 MongoException exceptionMock = new MongoException("");
-                doThrow(exceptionMock).when(pokemonPersonalRepository).pokemonPersonalCreate(pokemonDetailMock);
+                doThrow(exceptionMock).when(pokemonPersonalRepository).insert(pokemonDetailMock);
                 response = pokemonResource.pokemonPersonalCreate(pokemonDetailMock);
             }
             @Test
@@ -266,7 +266,7 @@ class PokemonResourceTest {
             public void mockAndArt() {
                 PokemonDetail pokemonDetailMock = new PokemonDetail();
                 RuntimeException exceptionMock = new RuntimeException();
-                doThrow(exceptionMock).when(pokemonPersonalRepository).pokemonPersonalCreate(pokemonDetailMock);
+                doThrow(exceptionMock).when(pokemonPersonalRepository).insert(pokemonDetailMock);
                 response = pokemonResource.pokemonPersonalCreate(pokemonDetailMock);
             }
             @Test
@@ -298,7 +298,7 @@ class PokemonResourceTest {
             public void mockAndArt() {
                 String idMock = "idMock";
                 MongoException exceptionMock = new MongoException("");
-                doThrow(exceptionMock).when(pokemonPersonalRepository).pokemonPersonalDelete(idMock);
+                doThrow(exceptionMock).when(pokemonPersonalRepository).delete(idMock);
                 response = pokemonResource.pokemonPersonalDeleteId(idMock);
             }
             @Test
@@ -315,7 +315,7 @@ class PokemonResourceTest {
             public void mockAndArt() {
                 String idMock = "idMock";
                 RuntimeException exceptionMock = new RuntimeException();
-                doThrow(exceptionMock).when(pokemonPersonalRepository).pokemonPersonalDelete(idMock);
+                doThrow(exceptionMock).when(pokemonPersonalRepository).delete(idMock);
                 response = pokemonResource.pokemonPersonalDeleteId(idMock);
             }
             @Test
@@ -332,7 +332,7 @@ class PokemonResourceTest {
             public void mockAndArt() {
                 String idMock = "idmock";
                 PokemonDetail pokemonDetailMock = new PokemonDetail();
-                response = pokemonResource.pokemonPersonalUpdateId(pokemonDetailMock, idMock);
+                response = pokemonResource.pokemonPersonalUpdateId(idMock, pokemonDetailMock);
             }
             @Test
             @DisplayName("Then the answer will be success for pokemon update")
@@ -347,10 +347,10 @@ class PokemonResourceTest {
             @BeforeEach
             public void mockAndArt() {
                 String idMock = "idMock";
-                PokemonDetail pokemonDetailMock = new PokemonDetail();
                 MongoException exceptionMock = new MongoException("");
-                doThrow(exceptionMock).when(pokemonPersonalRepository).pokemonPersonalUpdate(pokemonDetailMock, idMock);
-                response = pokemonResource.pokemonPersonalUpdateId(pokemonDetailMock, idMock);
+                PokemonDetail pokemonDetailMock = new PokemonDetail();
+                doThrow(exceptionMock).when(pokemonPersonalRepository).update(idMock, pokemonDetailMock);
+                response = pokemonResource.pokemonPersonalUpdateId(idMock, pokemonDetailMock);
             }
             @Test
             @DisplayName("Then response is Internal error for Mongo exception for pokemon update")
@@ -367,8 +367,8 @@ class PokemonResourceTest {
                 String idMock = "idMock";
                 PokemonDetail pokemonDetailMock = new PokemonDetail();
                 RuntimeException exceptionMock = new RuntimeException();
-                doThrow(exceptionMock).when(pokemonPersonalRepository).pokemonPersonalUpdate(pokemonDetailMock, idMock);
-                response = pokemonResource.pokemonPersonalUpdateId(pokemonDetailMock, idMock);
+                doThrow(exceptionMock).when(pokemonPersonalRepository).update(idMock, pokemonDetailMock);
+                response = pokemonResource.pokemonPersonalUpdateId(idMock, pokemonDetailMock);
             }
             @Test
             @DisplayName("Then response is internal error for exception for pokemon update")

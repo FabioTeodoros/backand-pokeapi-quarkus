@@ -5,23 +5,22 @@ import com.mongodb.client.*;
 
 import com.pokeapi.domain.entities.PokemonBasicResponsesPokeApi;
 import com.pokeapi.domain.entities.PokemonDetail;
-
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 import static com.mongodb.client.model.Filters.eq;
 import static com.pokeapi.TestUtil.getLoggerMock;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
@@ -40,9 +39,17 @@ class PokemonPersonalRepositoryTest {
     @Mock
     private MongoDatabase mongoDatabase;
     @Mock
-    private FindIterable iterable;
+    private FindIterable findIterable;
+    @Mock
+    private MongoIterable mongoIterable;
     @InjectMocks
     private PokemonPersonalRepository pokemonPersonalRepository;
+
+    private final String ID = "1";
+    private MongoException mongoException;
+    private RuntimeException exception;
+    private IllegalArgumentException illegalArgumentException;
+    private PokemonDetail pokemonDetailMock;
 
     @BeforeEach
     public void init() {
@@ -54,8 +61,9 @@ class PokemonPersonalRepositoryTest {
         pokemonPersonalRepository = new PokemonPersonalRepository(mongoClient);
 
         doReturn(mongoDatabase).when(mongoClient).getDatabase("pokemonPersonal");
-        doReturn(mongoCollection).when(mongoDatabase).getCollection("pokemonPersonal");
+        doReturn(mongoCollection).when(mongoDatabase).getCollection("pokemonPersonal2", PokemonDetail.class);
     }
+
     @BeforeEach
     void mock() throws Exception {
         loggerMock = getLoggerMock(PokemonPersonalRepository.class);
@@ -66,189 +74,207 @@ class PokemonPersonalRepositoryTest {
     class PokemonRepository {
 
         @Nested
-        @DisplayName("When getCollection return successfully")
-        class SuccessGetCollectionOrigin {
-            private MongoCollection resultMongo;
-
+        @DisplayName("When get id return successfully")
+        class SuccessGetId {
+            PokemonDetail result;
             @BeforeEach
             public void mockAndAct() {
-                resultMongo = pokemonPersonalRepository.collection();
-            }
+                pokemonDetailMock = new PokemonDetail();
+                doReturn(findIterable).when(mongoCollection).find(eq("_id", ID));
+                doReturn(pokemonDetailMock).when(findIterable).first();
 
+                result = pokemonPersonalRepository.id(ID);
+            }
             @Test
             @DisplayName("Then answer success")
-            void validateReturnGetColletionSuccess() {
-                assertEquals(resultMongo, mongoCollection);
-            }
-        }
-
-        @Nested
-        @DisplayName("When getPokemonDetailIdPersonal return successfully")
-        class SuccessReturnListDetailIdPersonal {
-            List<PokemonDetail> result;
-            Long valueCountDocument = 1L;
-            String id = "1";
-
-            @BeforeEach
-            public void mockAndAct() {
-
-                doReturn(valueCountDocument).when(mongoCollection).countDocuments(any(Bson.class));
-                doReturn(iterable).when(mongoCollection).find(any(Bson.class));
-                doReturn(mongoCursor).when(iterable).iterator();
-                doReturn(true, true, true, false).when(mongoCursor).hasNext();
-                doReturn(document).when(mongoCursor).next();
-
-                result = pokemonPersonalRepository.pokemonDetailIdPersonal(id);
-            }
-
-            @Test
-            @DisplayName("then return success for list getPokemonDetailIdPersonal size")
-            void validationReturnGetListPokemonDetailIdMockSize() {
-                assertEquals(3, result.size());
-            }
-
-            @Test
-            @DisplayName("Then logs used in getPokemonDetailIdPersonal should be called correctly on success")
-            void validationLogsGetPokemonDetailIdPersonalSuccess() {
-                verify(loggerMock, times(3))
-                        .info("get detailed Pokémons Personal");
+            void validateReturnGetId() {
+                verify(loggerMock, times(1)).info("Get Pokémon Detail Personal Id Success");
+                assertEquals(pokemonDetailMock, result);
             }
         }
 
         @Nested
         @DisplayName("When the sent id is not exist in getPokemonDetailIdPersonal")
         class FailReturnIdProblem {
-            RuntimeException exceptionMock = new RuntimeException();
-            List<PokemonDetail> result;
-            String id = "-1";
-            Long valueCountDocument = -1L;
+            PokemonDetail result;
 
             @BeforeEach
             public void mockAndAct() {
-                doReturn(valueCountDocument).when(mongoCollection).countDocuments(any(Bson.class));
-                result = pokemonPersonalRepository.pokemonDetailIdPersonal(id);
+                pokemonDetailMock = new PokemonDetail();
+                doReturn(findIterable).when(mongoCollection).find(eq("_id", ID));
+                doReturn(null).when(findIterable).first();
+
+                result = pokemonPersonalRepository.id(ID);
             }
 
             @Test
-            @DisplayName("then return list is empty")
+            @DisplayName("then return null")
             void validationErrorId() {
-                assertEquals(pokemonPersonalRepository.pokemonDetailIdPersonal(id).size(), result.size());
-            }
-
-            @Test
-            @DisplayName("Then logs used in getPokemonDetailIdPersonal should be called correctly in case of get failure")
-            void validationLogsGetPokemonDetailIdPersonalFailed() {
-                verify(loggerMock, times(1))
-                        .info("Pokemon id not exist");
-            }
-        }
-
-        @Nested
-        @DisplayName("When the mongobd has a problem in getPokemonDetailIdPersonal")
-        class FailReturnMongoHasProblem {
-            List<PokemonDetail> result;
-            String id = "1";
-
-            @BeforeEach
-            public void mockAndAct() {
-                MongoException exceptionMock = new MongoException("");
-
-                doThrow(exceptionMock).when(mongoCollection).countDocuments(any(Bson.class));
-
-                result = pokemonPersonalRepository.pokemonDetailIdPersonal(id);
-            }
-
-            @Test
-            @DisplayName("then id has a problem")
-            void validationExptionMongo() {
-                assertEquals(pokemonPersonalRepository.pokemonDetailIdPersonal(id).size(), result.size());
-            }
-
-            @Test
-            @DisplayName("Then logs used in getPokemonDetailIdPersonal should be called correctly in case of exception mongoBd")
-            void validationLogsGetPokemonDetailIdPersonalExceptionMongoDb() {
-                verify(loggerMock, times(1))
-                        .info("Error in get PokemonPersonalId with MongoBd");
+                verify(loggerMock, times(1)).info("Pokemon Detail Personal Id not exist");
+                assertEquals(null, result);
             }
         }
 
         @Nested
         @DisplayName("When occur exception in getPokemonDetailIdPersonal")
         class FailReturnException {
-            List<PokemonDetail> result;
-            String id = "1";
+            PokemonDetail result;
 
             @BeforeEach
             public void mockAndAct() {
-                RuntimeException exceptionMock = new RuntimeException();
-
-                doThrow(exceptionMock).when(mongoCollection).countDocuments(any(Bson.class));
-
-                result = pokemonPersonalRepository.pokemonDetailIdPersonal(id);
+                doThrow(exception).when(mongoCollection).find(any(Bson.class));
+                result = pokemonPersonalRepository.id(ID);
             }
 
             @Test
             @DisplayName("then id has a problem")
-            void validationExptionMongo() {
-                assertEquals(pokemonPersonalRepository.pokemonDetailIdPersonal(id).size(), result.size());
+            void validationExption() {
+                assertEquals(null, result);
             }
 
             @Test
             @DisplayName("Then logs used in getPokemonDetailIdPersonal should be called correctly in case of exception mongoBd")
             void validationLogsGetPokemonDetailIdPersonalExceptionMongoDb() {
+                assertEquals(null, result);
                 verify(loggerMock, times(1))
-                        .info("Exception in get Pokémons");
+                        .info("Exception in get Pokémons Detail Personal Id " + exception);
+            }
+        }
+
+        @Nested
+        @DisplayName("When occur exception in MongoBd of getPokemonDetailIdPersonal")
+        class FailReturnMongoException {
+            PokemonDetail result;
+
+            @BeforeEach
+            public void mockAndAct() {
+                doThrow(mongoException).when(mongoCollection).find(any(Bson.class));
+                result = pokemonPersonalRepository.id(ID);
+            }
+
+            @Test
+            @DisplayName("Then logs used in getPokemonDetailIdPersonal should be called correctly in case of exception mongoBd")
+            void validationLogsGetPokemonDetailIdPersonalExceptionMongoDb() {
+                assertEquals(null, result);
+                verify(loggerMock, times(1))
+                        .info("Error in get Pokemon Personal Id with MongoBd");
             }
         }
 
         @Nested
         @DisplayName("When pokemonListPersonal return successfully")
-        class SuccessReturnListPersonal {
-            Long valueCountDocument = 1L;
+        class ReturnListPersonal {
             PokemonBasicResponsesPokeApi result;
-            String model = "modelMock";
 
             @BeforeEach
             public void mockAndAct() {
-                doReturn(iterable).when(mongoCollection).find();
-                doReturn(mongoCursor).when(iterable).iterator();
-                doReturn(valueCountDocument).when(mongoCollection).countDocuments(any(Bson.class));
-                doReturn(document).when(mongoCursor).next();
-                doReturn("1").when(document).getString("name");
-                doReturn("2").when(document).getString("url");
-                doReturn("3").when(document).getString("id");
+                pokemonDetailMock = new PokemonDetail();
+                doReturn(findIterable).when(mongoCollection).find();
 
-                result = pokemonPersonalRepository.pokemonListPersonal(model);
             }
 
             @Test
-            @DisplayName("then return success pokemonListPersonal")
+            @DisplayName("Then return success pokemonListPersonal")
             void validationSuccessPokemonListPersonal() {
-                assertEquals(result, pokemonPersonalRepository.pokemonListPersonal(model));
+                doReturn(pokemonDetailMock).when(findIterable).first();
+
+
+                doReturn(mongoCursor).when(mongoIterable).iterator();
+
+                doReturn(true, false).when(mongoCursor).hasNext();
+                doReturn(pokemonDetailMock).when(mongoCursor).next();
+
+                result = pokemonPersonalRepository.list("model");
+                assertEquals(pokemonDetailMock, result);
+                verify(loggerMock,times(1)).info("get Pokémons list Personal");
             }
+            @Test
+            @DisplayName("Then the list is null")
+            void validationListNull() {
+                doReturn(null).when(findIterable).first();
+
+                result = pokemonPersonalRepository.list("model");
+
+                assertEquals(null, result);
+                verify(loggerMock, times(1)).info("These Pokémons doesn't exist");
+            }
+
         }
 
         @Nested
-        @DisplayName("When pokemonPersonalCreate return successfully")
-        class SuccessReturnCreatePersonalPokemon {
-            Long valueCountDocument = 1L;
-            PokemonDetail pokemonDetailMock = new PokemonDetail();
+        @DisplayName("When pokemonPersonalCreate is called")
+        class CreatePersonalPokemon {
 
             @BeforeEach
             public void mockAndAct() {
-                String name = "1";
-                pokemonPersonalRepository.pokemonPersonalCreate(pokemonDetailMock);
-                doReturn(valueCountDocument).when(mongoCollection).countDocuments(eq("0"));
-
+                pokemonDetailMock = new PokemonDetail();
+                mongoException = new MongoException("");
+                exception = new RuntimeException();
             }
 
             @Test
             @DisplayName("Then return create pokemonPersonal")
             void validationSuccessCreatePokemonPersonal() {
-                verify(mongoCollection, times(1)).insertOne(document);
+                pokemonPersonalRepository.insert(pokemonDetailMock);
+
+                verify(mongoCollection, times(1)).insertOne(any());
+                verify(loggerMock, times(1)).info("Pokemon Personal Create Success");
+            }
+
+            @Test
+            @DisplayName("when an exception occurs in mongo when making an insert")
+            void validationExceptionMongoInsert() {
+
+                doThrow(mongoException).when(mongoCollection).insertOne(pokemonDetailMock);
+
+                pokemonPersonalRepository.insert(pokemonDetailMock);
+
+                verify(loggerMock, times(1)).info("Error with MongoBd");
+            }
+
+            @Test
+            @DisplayName("when an exception occurs in insert")
+            void validationExceptionInsert() {
+                doThrow(exception).when(mongoCollection).insertOne(any());
+
+                pokemonPersonalRepository.insert(pokemonDetailMock);
+
+                verify(loggerMock, times(1)).info("Error in Insert Pokémons");
+            }
+        }
+
+        @Nested
+        @DisplayName("When delete pokemon personal")
+        class DeletePokemonPersonal {
+            @Test
+            @DisplayName("When the delete is done successfully")
+            void validationDeletePokemonPersonalSuccess() {
+                long valueCountDocument = 1L;
+                doReturn(valueCountDocument).when(mongoCollection).countDocuments(any(Bson.class));
+
+                pokemonPersonalRepository.delete(ID);
+
+                verify(mongoCollection, times(1)).deleteOne(any(Bson.class));
+                verify(loggerMock, times(1)).info("deleted pokemon id: 1");
+            }
+            @Test
+            @DisplayName("When the id for delete is incorrect")
+            void validationDeletePersonalIncorrectId() {
+                pokemonPersonalRepository.delete(ID);
+
+                verify(loggerMock, times(1)).info("Error this id does not exists");
+            }
+            @Test
+            @DisplayName("When occur an exception for delete in the Mongo")
+            void validationDeletePokemonPersonalExceptionMongo() {
+                mongoException = new MongoException("");
+                doThrow(mongoException).when(mongoCollection).countDocuments(any(Bson.class));
+
+                pokemonPersonalRepository.delete(ID);
+
+                verify(loggerMock, times(1)).info("Error with MongoBd");
+
             }
         }
     }
 }
-
-//document.getString("id")

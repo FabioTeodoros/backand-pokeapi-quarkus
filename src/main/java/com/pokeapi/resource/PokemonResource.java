@@ -65,7 +65,7 @@ public class PokemonResource {
     @GET
     public Response pokemonPersonalDetailId(@PathParam("id") String id) {
         try {
-            return Response.ok(pokemonPersonalRepository.pokemonDetailIdPersonal(id)).build();
+            return Response.ok(pokemonPersonalRepository.id(id)).build();
         } catch (InvalidRequestException invalidRequestException) {
             return Response.status(Response.Status.NOT_FOUND).build();
         } catch (Exception exception) {
@@ -77,7 +77,7 @@ public class PokemonResource {
     @POST
     public Response pokemonPersonalCreate(PokemonDetail pokemonDetail) {
         try {
-            pokemonPersonalRepository.pokemonPersonalCreate(pokemonDetail);
+            pokemonPersonalRepository.insert(pokemonDetail);
             return Response.status(Response.Status.CREATED).build();
         } catch (MongoException mongoException) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -90,7 +90,7 @@ public class PokemonResource {
     @DELETE
     public Response pokemonPersonalDeleteId(@PathParam("id") final String id) {
         try {
-            pokemonPersonalRepository.pokemonPersonalDelete(id);
+            pokemonPersonalRepository.delete(id);
             return Response.status(Response.Status.ACCEPTED).build();
         } catch (MongoException mongoException) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -101,9 +101,9 @@ public class PokemonResource {
 
     @Path("/personal/{id}")
     @PUT
-    public Response pokemonPersonalUpdateId(PokemonDetail pokemonDetail, String id) {
+    public Response pokemonPersonalUpdateId(String id, PokemonDetail pokemonDetail) {
         try {
-            pokemonPersonalRepository.pokemonPersonalUpdate(pokemonDetail, id);
+            pokemonPersonalRepository.update(id, pokemonDetail);
             return Response.status(Response.Status.ACCEPTED).build();
         } catch (MongoException mongoException) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();

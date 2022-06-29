@@ -5,7 +5,7 @@ import java.util.List;
 public class PokemonBasicResponsesPokeApi {
 
     private Integer count;
-    private List<PokemonBasicResponsePokeApi> results;
+    private List<PokemonBasicResponse> results;
 
     public PokemonBasicResponsesPokeApi() {
 
@@ -19,11 +19,11 @@ public class PokemonBasicResponsesPokeApi {
         this.count = count;
     }
 
-    public List<PokemonBasicResponsePokeApi> getResults() {
+    public List<PokemonBasicResponse> getResults() {
         return results;
     }
 
-    public void setResults(List<PokemonBasicResponsePokeApi>results) {
+    public void setResults(List<PokemonBasicResponse>results) {
         this.results = results;
     }
 }

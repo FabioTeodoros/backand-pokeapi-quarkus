@@ -1,12 +1,12 @@
 package com.pokeapi.domain.entities;
 
-public class PokemonBasicResponsePokeApi {
+public class PokemonBasicResponse {
 
     private String id;
     private String name;
     private String url;
 
-    public PokemonBasicResponsePokeApi() {
+    public PokemonBasicResponse() {
 
     }
 
