@@ -2,7 +2,7 @@ package com.pokeapi.resource;
 
 import com.mongodb.MongoException;
 import com.pokeapi.domain.entities.PokemonDetail;
-import com.pokeapi.domain.entities.PokemonFullContractList;
+import com.pokeapi.domain.entities.PokemonFullContractFull;
 import com.pokeapi.infrastructure.gateway.PokemonFullService;
 import com.pokeapi.infrastructure.gateway.PokemonOfficialDetailService;
 import com.pokeapi.infrastructure.mongodb.repositories.PokemonPersonalRepository;
@@ -94,8 +94,8 @@ class PokemonResourceTest {
             @BeforeEach
             public void mockAndAct() {
                 String modelMock = "modelMock";
-                PokemonFullContractList pokemonFullContractListMock = new PokemonFullContractList();
-                doReturn(pokemonFullContractListMock).when(pokemonFullService).pokemonGetValidation(modelMock);
+                PokemonFullContractFull pokemonFullContractFullMock = new PokemonFullContractFull();
+                doReturn(pokemonFullContractFullMock).when(pokemonFullService).pokemonGetValidation(modelMock);
                 response = pokemonResource.list(modelMock);
             }
             @Test

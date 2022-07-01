@@ -2,12 +2,12 @@ package com.pokeapi.domain.entities;
 
 import java.util.List;
 
-public class PokemonFullContractList {
+public class PokemonFullContractFull {
 
     private Integer count;
     private List<PokemonFullContractBasic> results;
 
-    public PokemonFullContractList() {
+    public PokemonFullContractFull() {
 
     }
 
@@ -27,9 +27,9 @@ public class PokemonFullContractList {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof PokemonFullContractList)) return false;
+        if (!(o instanceof PokemonFullContractFull)) return false;
 
-        PokemonFullContractList that = (PokemonFullContractList) o;
+        PokemonFullContractFull that = (PokemonFullContractFull) o;
 
         if (count != null ? !count.equals(that.count) : that.count != null) return false;
         return results != null ? results.equals(that.results) : that.results == null;

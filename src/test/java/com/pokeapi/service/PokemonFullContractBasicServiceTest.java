@@ -34,7 +34,7 @@ class PokemonFullContractBasicServiceTest {
     @Mock
     private PokemonBasicResponsesPoke pokemonBasicResponsesPoke;
     @Mock
-    private PokemonFullContractList pokemonFullContractList;
+    private PokemonFullContractFull pokemonFullContractFull;
     private final RuntimeException runtimeException = new RuntimeException();
     private Logger loggerMock;
 
@@ -62,9 +62,9 @@ class PokemonFullContractBasicServiceTest {
         @DisplayName("When check the returns getCount offSet small")
         class GetOfficialOffsetSmallTest {
             PokemonBasicResponse pokemonBasicResponseMock = new PokemonBasicResponse();
-            PokemonFullContractList result;
+            PokemonFullContractFull result;
             String name = "nameMock";
-            PokemonFullContractList pokemonFullContractListTest = new PokemonFullContractList();
+            PokemonFullContractFull pokemonFullContractFullTest = new PokemonFullContractFull();
             List<PokemonBasicResponse> pokemonBasicResponseList = new ArrayList<>();
             PokemonFullContractBasic pokemonFullContractBasicTest = new PokemonFullContractBasic();
             List<PokemonFullContractBasic> pokemonFullContractBasicListTest = new ArrayList<>();
@@ -81,7 +81,7 @@ class PokemonFullContractBasicServiceTest {
 
                 pokemonFullContractBasicListTest.add(pokemonFullContractBasicTest);
 
-                pokemonFullContractListTest.setResults(pokemonFullContractBasicListTest);
+                pokemonFullContractFullTest.setResults(pokemonFullContractBasicListTest);
 
                 doReturn(pokemonBasicResponsesPoke).when(pokemonOfficialBasicService).officialList();
                 doReturn(1).when(pokemonBasicResponsesPoke).getCount();
@@ -93,7 +93,7 @@ class PokemonFullContractBasicServiceTest {
             @Test
             @DisplayName("Then answer success for getOfficial getResults")
             void valadationGetOfficialResultsTest() {
-               assertEquals(pokemonFullContractListTest, result);
+               assertEquals(pokemonFullContractFullTest, result);
             }
             @Test
             @DisplayName("Then check call log info")
@@ -110,12 +110,12 @@ class PokemonFullContractBasicServiceTest {
         @Nested
         @DisplayName("When check the returns getCount offSet Big")
         class GetOfficialOffsetLargerTest {
-            PokemonFullContractList pokemonFullContractListTest = new PokemonFullContractList();
+            PokemonFullContractFull pokemonFullContractFullTest = new PokemonFullContractFull();
             List<PokemonFullContractBasic> pokemonFullContractBasicListTest = new ArrayList<>();
             PokemonFullContractBasic pokemonFullContractBasicTest;
             PokemonBasicResponse pokemonBasicResponseMock = new PokemonBasicResponse();
             List<PokemonBasicResponse> pokemonBasicResponseList = new ArrayList<>();
-            PokemonFullContractList result;
+            PokemonFullContractFull result;
             String name = "nameMock";
             Integer countOfficial = 899;
 
@@ -137,7 +137,8 @@ class PokemonFullContractBasicServiceTest {
                                 replace("{id}",
                                 Integer.toString((10000 - 897) + index)));
                     }pokemonFullContractBasicListTest.add(pokemonFullContractBasicTest);
-                }pokemonFullContractListTest.setResults(pokemonFullContractBasicListTest);
+                }
+                pokemonFullContractFullTest.setResults(pokemonFullContractBasicListTest);
 
                 doReturn(pokemonBasicResponsesPoke).when(pokemonOfficialBasicService).officialList();
                 doReturn(countOfficial).when(pokemonBasicResponsesPoke).getCount();
@@ -148,14 +149,14 @@ class PokemonFullContractBasicServiceTest {
             void validationGetResultsOfficialOffsetBigTest() {
                 result = pokemonFullContractService.getPokemonOfficial();
 
-                assertEquals(pokemonFullContractListTest, result);
+                assertEquals(pokemonFullContractFullTest, result);
             }
         }
         @Nested
         @DisplayName("When check the exceptions pokemonGetOfficial")
         class GetOfficialExceptionTest {
-            PokemonFullContractList result;
-            PokemonFullContractList pokemonFullContractList = new PokemonFullContractList();
+            PokemonFullContractFull result;
+            PokemonFullContractFull pokemonFullContractFull = new PokemonFullContractFull();
             @Test
             @DisplayName("When an excess occurs")
             void validationExceptionTest() {
@@ -163,7 +164,7 @@ class PokemonFullContractBasicServiceTest {
 
                 result = pokemonFullContractService.getPokemonOfficial();
 
-                assertEquals(pokemonFullContractList, result);
+                assertEquals(pokemonFullContractFull, result);
             }
 
             @Test
@@ -180,19 +181,19 @@ class PokemonFullContractBasicServiceTest {
         @Nested
         @DisplayName("When getPokemonPersonal is called")
         class GetPersonalTest {
-            PokemonFullContractList pokemonFullContractListTest = new PokemonFullContractList();
+            PokemonFullContractFull pokemonFullContractFullTest = new PokemonFullContractFull();
             List<PokemonFullContractBasic> pokemonFullContractBasicListTest = new ArrayList<>();
             PokemonFullContractBasic pokemonFullContractBasicTest = new PokemonFullContractBasic();
             List<PokemonDetail> pokemonDetails = new ArrayList<>();
             PokemonDetail pokemonDetail = new PokemonDetail();
-            PokemonFullContractList result;
+            PokemonFullContractFull result;
 
             @BeforeEach
             public void mockAndAct() {
                 pokemonFullContractBasicTest.setModel("personal");
                 pokemonFullContractBasicTest.setUrlImage("https://rickandmortyapi.com/api/character/avatar/1.jpeg");
                 pokemonFullContractBasicListTest.add(pokemonFullContractBasicTest);
-                pokemonFullContractListTest.setResults(pokemonFullContractBasicListTest);
+                pokemonFullContractFullTest.setResults(pokemonFullContractBasicListTest);
 
                 pokemonDetails.add(pokemonDetail);
 
@@ -205,7 +206,7 @@ class PokemonFullContractBasicServiceTest {
             @Test
             @DisplayName("Then answer success for get personal")
             void validationSuccessGetResultsPersonalTest() {
-                assertEquals(pokemonFullContractListTest, result);
+                assertEquals(pokemonFullContractFullTest, result);
 
             }
 
@@ -218,8 +219,8 @@ class PokemonFullContractBasicServiceTest {
         @Nested
         @DisplayName("When get Personal is called and gets an exception")
         class getPersonalExceptionTest {
-            PokemonFullContractList pokemonFullContractListTest = new PokemonFullContractList();
-            PokemonFullContractList result;
+            PokemonFullContractFull pokemonFullContractFullTest = new PokemonFullContractFull();
+            PokemonFullContractFull result;
             @Test
             @DisplayName("Then an excess occurs")
             void validationExceptionTest() {
@@ -227,7 +228,7 @@ class PokemonFullContractBasicServiceTest {
 
                 result = pokemonFullContractService.getPokemonPersonal();
 
-                assertEquals(pokemonFullContractListTest, result);
+                assertEquals(pokemonFullContractFullTest, result);
             }
         }
 
@@ -235,32 +236,32 @@ class PokemonFullContractBasicServiceTest {
         @DisplayName("When getPokemonAll is called")
         class GetAllTest {
             @Mock
-            PokemonFullContractList pokemonFullContractList2 = new PokemonFullContractList();
+            PokemonFullContractFull pokemonFullContractFull2 = new PokemonFullContractFull();
             PokemonFullContractService pokemonFullContractServiceForSpy = new PokemonFullContractService(pokemonOfficialBasicService, pokemonPersonalRepository);
             PokemonFullContractService pokemonSpyService = Mockito.spy(pokemonFullContractServiceForSpy);
             List<PokemonFullContractBasic> pokemonFullContractBasicMock = new ArrayList<>();
             List<PokemonFullContractBasic> pokemonFullContractBasicList = new ArrayList<>();
             List<PokemonFullContractBasic> pokemonFullContractBasicList2 = new ArrayList<>();
-            PokemonFullContractList pokemonFullContractListTest = new PokemonFullContractList();
-            PokemonFullContractList result;
+            PokemonFullContractFull pokemonFullContractFullTest = new PokemonFullContractFull();
+            PokemonFullContractFull result;
 
             @BeforeEach
             void mockAndAct() {
-                pokemonFullContractList.setResults(pokemonFullContractBasicMock);
-                pokemonFullContractList2.setResults(pokemonFullContractBasicMock);
-                pokemonFullContractListTest.setResults(pokemonFullContractBasicMock);
+                pokemonFullContractFull.setResults(pokemonFullContractBasicMock);
+                pokemonFullContractFull2.setResults(pokemonFullContractBasicMock);
+                pokemonFullContractFullTest.setResults(pokemonFullContractBasicMock);
 
-                doReturn(pokemonFullContractList).when(pokemonSpyService).getPokemonOfficial();
-                doReturn(pokemonFullContractBasicList).when(pokemonFullContractList).getResults();
-                doReturn(pokemonFullContractList2).when(pokemonSpyService).getPokemonPersonal();
-                doReturn(pokemonFullContractBasicList2).when(pokemonFullContractList2).getResults();
+                doReturn(pokemonFullContractFull).when(pokemonSpyService).getPokemonOfficial();
+                doReturn(pokemonFullContractBasicList).when(pokemonFullContractFull).getResults();
+                doReturn(pokemonFullContractFull2).when(pokemonSpyService).getPokemonPersonal();
+                doReturn(pokemonFullContractBasicList2).when(pokemonFullContractFull2).getResults();
 
                 result = pokemonSpyService.getPokemonAll();
             }
             @Test
             @DisplayName("Then check the results")
             void validationSetResultsGetAllTest() {
-                assertEquals(pokemonFullContractListTest.getResults(), result.getResults());
+                assertEquals(pokemonFullContractFullTest.getResults(), result.getResults());
             }
 
             @Test
@@ -286,7 +287,7 @@ class PokemonFullContractBasicServiceTest {
         class GetAllExcepetionTest {
             PokemonFullContractService pokemonFullContractServiceForSpy = new PokemonFullContractService(pokemonOfficialBasicService, pokemonPersonalRepository);
             PokemonFullContractService pokemonSpyService = Mockito.spy(pokemonFullContractServiceForSpy);
-            PokemonFullContractList result;
+            PokemonFullContractFull result;
             @Test
             @DisplayName("Then occur exception getAll verify calls")
             void validationExceptionGetOfficialTest() {
@@ -299,25 +300,25 @@ class PokemonFullContractBasicServiceTest {
             @Test
             @DisplayName("Then occur exception getAll")
             void validationExceptionGetAllTest() {
-                PokemonFullContractList pokemonFullContractListTest = new PokemonFullContractList();
+                PokemonFullContractFull pokemonFullContractFullTest = new PokemonFullContractFull();
                 doThrow(runtimeException).when(pokemonSpyService).getPokemonOfficial();
 
                 result = pokemonSpyService.getPokemonAll();
 
-                assertEquals(pokemonFullContractListTest, result);
+                assertEquals(pokemonFullContractFullTest, result);
             }
         }
         @Nested
         @DisplayName("When pokemonGetValidationCalled")
         class ValidationGetModelTest {
-            PokemonFullContractList result;
+            PokemonFullContractFull result;
             PokemonFullContractService pokemonFullContractServiceForSpy = new PokemonFullContractService(pokemonOfficialBasicService, pokemonPersonalRepository);
             PokemonFullContractService pokemonSpyService = Mockito.spy(pokemonFullContractServiceForSpy);
             @Test
             @DisplayName("Then pokemonModel personal is called")
             void validationGetPersonalTest() {
                 String model = "personal";
-                doReturn(pokemonFullContractList).when(pokemonSpyService).getPokemonAll();
+                doReturn(pokemonFullContractFull).when(pokemonSpyService).getPokemonAll();
 
                 result = pokemonSpyService.pokemonGetValidation(model);
 
@@ -327,7 +328,7 @@ class PokemonFullContractBasicServiceTest {
             @DisplayName("Then pokemonModel personal is called verify")
             void validationCallPersonalTest() {
                 String model = "personal";
-                doReturn(pokemonFullContractList).when(pokemonSpyService).getPokemonAll();
+                doReturn(pokemonFullContractFull).when(pokemonSpyService).getPokemonAll();
 
                 result = pokemonSpyService.pokemonGetValidation(model);
 
@@ -337,7 +338,7 @@ class PokemonFullContractBasicServiceTest {
             @DisplayName("Then pokemonModel official is called")
             void validationGetOfficialTest() {
                 String model = "official";
-                doReturn(pokemonFullContractList).when(pokemonSpyService).getPokemonAll();
+                doReturn(pokemonFullContractFull).when(pokemonSpyService).getPokemonAll();
 
                 result = pokemonSpyService.pokemonGetValidation(model);
 
@@ -347,7 +348,7 @@ class PokemonFullContractBasicServiceTest {
             @DisplayName("Then pokemonModel official is called verify")
             void validationCallOfficialTest() {
                 String model = "official";
-                doReturn(pokemonFullContractList).when(pokemonSpyService).getPokemonAll();
+                doReturn(pokemonFullContractFull).when(pokemonSpyService).getPokemonAll();
 
                 result = pokemonSpyService.pokemonGetValidation(model);
 
@@ -357,7 +358,7 @@ class PokemonFullContractBasicServiceTest {
             @DisplayName("Then pokemonModel all is called")
             void validationGetAllTest() {
                 String model = "all";
-                doReturn(pokemonFullContractList).when(pokemonSpyService).getPokemonAll();
+                doReturn(pokemonFullContractFull).when(pokemonSpyService).getPokemonAll();
 
                 result = pokemonSpyService.pokemonGetValidation(model);
 
@@ -367,7 +368,7 @@ class PokemonFullContractBasicServiceTest {
             @DisplayName("Then pokemonModel all is called verify")
             void validationCallAllTest() {
                 String model = "all";
-                doReturn(pokemonFullContractList).when(pokemonSpyService).getPokemonAll();
+                doReturn(pokemonFullContractFull).when(pokemonSpyService).getPokemonAll();
 
                 result = pokemonSpyService.pokemonGetValidation(model);
 
@@ -377,7 +378,7 @@ class PokemonFullContractBasicServiceTest {
             @DisplayName("Then pokemonModel have invalid model")
             void validationInvalidModelTest() {
                 String model = "";
-                doReturn(pokemonFullContractList).when(pokemonSpyService).getPokemonAll();
+                doReturn(pokemonFullContractFull).when(pokemonSpyService).getPokemonAll();
 
                 result = pokemonSpyService.pokemonGetValidation(model);
 

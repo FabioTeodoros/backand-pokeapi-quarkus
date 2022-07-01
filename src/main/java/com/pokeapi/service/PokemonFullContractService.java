@@ -36,8 +36,8 @@ public class PokemonFullContractService implements PokemonFullService {
     @Inject
     PokemonPersonalRepository pokemonPersonalRepository;
 
-    public PokemonFullContractList getPokemonOfficial() {
-        PokemonFullContractList pokemonFullContracts = new PokemonFullContractList();
+    public PokemonFullContractFull getPokemonOfficial() {
+        PokemonFullContractFull pokemonFullContracts = new PokemonFullContractFull();
         try {
             PokemonBasicResponsesPoke pokemonBasicResponsesPoke = pokemonOficialBasicService.officialList();
             List<PokemonFullContractBasic> resultOfficial = new ArrayList<>();
@@ -65,8 +65,8 @@ public class PokemonFullContractService implements PokemonFullService {
         }return pokemonFullContracts;
     }
 
-    public PokemonFullContractList getPokemonPersonal() {
-        PokemonFullContractList pokemonFullContractList = new PokemonFullContractList();
+    public PokemonFullContractFull getPokemonPersonal() {
+        PokemonFullContractFull pokemonFullContractFull = new PokemonFullContractFull();
         try {
             List<PokemonDetail> pokemonsDetail = pokemonPersonalRepository.list();
             List<PokemonFullContractBasic> pokemonResult = new ArrayList<>();
@@ -79,15 +79,15 @@ public class PokemonFullContractService implements PokemonFullService {
                         (Integer.toString((pokemonResult.size()) + OFFSET))));
                 pokemonResult.add(pokemonFullContractBasic);
             });
-            pokemonFullContractList.setResults(pokemonResult);
+            pokemonFullContractFull.setResults(pokemonResult);
             LOGGER.info("Get pokemon Personal is Success");
         } catch (Exception exception) {
             LOGGER.info("Error Service getPokemonPersonal");
-        }return pokemonFullContractList;
+        }return pokemonFullContractFull;
     }
 
-    public PokemonFullContractList getPokemonAll() {
-        PokemonFullContractList pokemonFullContracts = new PokemonFullContractList();
+    public PokemonFullContractFull getPokemonAll() {
+        PokemonFullContractFull pokemonFullContracts = new PokemonFullContractFull();
         try {
             List<PokemonFullContractBasic> pokemonFullContractBasicsOfficial = this.getPokemonOfficial().getResults();
             List<PokemonFullContractBasic> pokemonFullContractBasicsPersonal = this.getPokemonPersonal().getResults();
@@ -104,7 +104,7 @@ public class PokemonFullContractService implements PokemonFullService {
         return pokemonFullContracts;
     }
 
-    public PokemonFullContractList pokemonGetValidation(String model) {
+    public PokemonFullContractFull pokemonGetValidation(String model) {
         try {
             if (model.equals(PokemonModel.PERSONAL.getDescriptor())) {
                 return getPokemonPersonal();

@@ -56,7 +56,8 @@ public class PokemonPersonalRepository implements com.pokeapi.infrastructure.gat
             LOGGER.info("Error in get Pokemon Personal Id with MongoBd");
         } catch (Exception exception) {
             LOGGER.info("Exception in get Pokémon Detail Personal Id ");
-        }LOGGER.info("Get Pokémon Detail Personal Id Success");
+        }
+        LOGGER.info("Get Pokémon Detail Personal Id Success");
         return pokemonDetail;
     }
 
@@ -73,7 +74,8 @@ public class PokemonPersonalRepository implements com.pokeapi.infrastructure.gat
             LOGGER.info("Error with MongoBd");
         } catch (Exception exception) {
             LOGGER.info("error in get Pokémons personal list");
-        } LOGGER.info("Get pokemon list personal success");
+        }
+        LOGGER.info("Get pokemon list personal success");
         return pokemonsPersonal;
     }
 
@@ -93,9 +95,9 @@ public class PokemonPersonalRepository implements com.pokeapi.infrastructure.gat
     @Override
     public void delete(String id) {
         try {
-            if(collection().deleteOne(getId(id)).getDeletedCount() == EXIST_BD) {
+            if (collection().deleteOne(getId(id)).getDeletedCount() == EXIST_BD) {
                 LOGGER.info("Error this id does not exists");
-            }else LOGGER.info(String.format("deleted pokemon id: %s", id));
+            } else LOGGER.info(String.format("deleted pokemon id: %s", id));
         } catch (MongoException mongoException) {
             LOGGER.info("Error with MongoBd");
         } catch (Exception exception) {
@@ -106,13 +108,13 @@ public class PokemonPersonalRepository implements com.pokeapi.infrastructure.gat
     @Override
     public void update(String id, PokemonDetail pokemonDetail) {
         try {
-                Document command = new Document("$set", pokemonDetail);
-                if(collection().updateOne(getId(id), command).getMatchedCount() == EXIST_BD){
-                    LOGGER.info("Error update, this id does not exists");
-                }else LOGGER.info(String.format("Pokémon has been updated"));
+            Document command = new Document("$set", pokemonDetail);
+            if (collection().updateOne(getId(id), command).getMatchedCount() == EXIST_BD) {
+                LOGGER.info("Error update, this id does not exists");
+            } else LOGGER.info(String.format("Pokémon has been updated"));
         } catch (MongoException mongoException) {
             LOGGER.info("Error with MongoBd");
-        }catch (Exception exception) {
+        } catch (Exception exception) {
             LOGGER.info("Error in update Pokémons");
         }
     }

@@ -1,4 +1,4 @@
-package com.pokeapi.infrastructure.gateway.config;
+package com.pokeapi.infrastructure.gateway.imp;
 
 import com.pokeapi.infrastructure.imp.AbstractPokemonDetail;
 

@@ -1,11 +1,10 @@
-package com.pokeapi.infrastructure.gateway.config;
+package com.pokeapi.infrastructure.gateway.imp;
 
 import com.pokeapi.domain.entities.PokemonBasicResponsesPoke;
 import com.pokeapi.infrastructure.imp.AbstractPokemonBasic;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -13,14 +12,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+
+import java.net.http.WebSocket;
 
 import static org.mockito.Mockito.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
-@TestHTTPEndpoint(PokemonDetailGateway.class)
-class PokemonDetailGatewayTest {
+@TestHTTPEndpoint(AbstractPokemonBasic.class)
+class AbstractPokemonBasicTest {
 
     @Mock
     private WebTarget webTarget;
@@ -28,7 +31,9 @@ class PokemonDetailGatewayTest {
     @Mock
     private Client client;
     @Mock
-    private ClientBuilder builder;
+    private ClientBuilder clientBuilder;
+    @Mock
+    private Invocation invocation;
 
     @Mock
     private PokemonBasicResponsesPoke pokemonBasicResponsesPoke;
@@ -36,8 +41,8 @@ class PokemonDetailGatewayTest {
     @Mock
     private AbstractPokemonBasic abstractPokemonBasic;
 
-    @InjectMocks
-    PokemonBasicGateway pokemonBasicGateway;
+    @Mock
+    private PokemonBasicGateway pokemonBasicGateway;
 
     @BeforeEach
     public void init() {
@@ -58,6 +63,8 @@ class PokemonDetailGatewayTest {
         class GatewayTest {
 
             String domain = "https://pokeapi.co/api/v2/pokemon?limit=2000&offset=0";
+            Client client;
+            WebSocket.Builder builderMock;
 
             @BeforeEach
             public void mockAndAct() {
@@ -66,8 +73,7 @@ class PokemonDetailGatewayTest {
             @Test
             @DisplayName("")
             void validationGatewayTest() {
-                doReturn(webTarget).when(client).target(domain);
-                doReturn(builder.build()).when(webTarget).request();
+                doReturn(clientBuilder.build()).when(webTarget).request();
 
                 abstractPokemonBasic.officialList();
 
