@@ -3,7 +3,6 @@ package com.pokeapi.resource;
 import com.mongodb.MongoException;
 import com.pokeapi.domain.entities.PokemonDetail;
 import com.pokeapi.infrastructure.gateway.PokemonFullService;
-import com.pokeapi.resource.exceptions.InvalidRequestException;
 import com.pokeapi.infrastructure.gateway.PokemonOfficialDetailService;
 import com.pokeapi.infrastructure.mongodb.repositories.PokemonPersonalRepository;
 
@@ -36,7 +35,7 @@ public class PokemonResource {
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response pokemonDetailOfficialId(@PathParam("id") final String id) {
+    public Response detailOfficialId(@PathParam("id") final String id) {
         try {
             return Response.ok().entity(pokemonOfficialDetailService.buscaPokemonDetail(id)).build();
         } catch (Exception exception) {
@@ -47,15 +46,13 @@ public class PokemonResource {
     @Path("/list")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response pokemonList(@QueryParam("model") String model) {
+    public Response list(@QueryParam("model") String model) {
         try {
             return Response.ok().entity(pokemonFullService.pokemonGetValidation(model)).build();
         } catch (IllegalArgumentException illegalArgumentException) {
             return Response.status(Response.Status.NOT_FOUND).build();
         } catch (MongoException mongoException) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        } catch (InvalidRequestException invalidRequestException) {
-            return Response.status(Response.Status.NOT_FOUND).build();
         } catch (Exception exception) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
@@ -63,11 +60,9 @@ public class PokemonResource {
 
     @Path("/personal/{id}")
     @GET
-    public Response pokemonPersonalDetailId(@PathParam("id") String id) {
+    public Response detailPersonalId(@PathParam("id") String id) {
         try {
             return Response.ok(pokemonPersonalRepository.id(id)).build();
-        } catch (InvalidRequestException invalidRequestException) {
-            return Response.status(Response.Status.NOT_FOUND).build();
         } catch (Exception exception) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
@@ -75,7 +70,7 @@ public class PokemonResource {
 
     @Path("/personal")
     @POST
-    public Response pokemonPersonalCreate(PokemonDetail pokemonDetail) {
+    public Response Insert(PokemonDetail pokemonDetail) {
         try {
             pokemonPersonalRepository.insert(pokemonDetail);
             return Response.status(Response.Status.CREATED).build();
@@ -88,7 +83,7 @@ public class PokemonResource {
 
     @Path("/personal/{id}")
     @DELETE
-    public Response pokemonPersonalDeleteId(@PathParam("id") final String id) {
+    public Response deleteId(@PathParam("id") final String id) {
         try {
             pokemonPersonalRepository.delete(id);
             return Response.status(Response.Status.ACCEPTED).build();
@@ -101,7 +96,7 @@ public class PokemonResource {
 
     @Path("/personal/{id}")
     @PUT
-    public Response pokemonPersonalUpdateId(String id, PokemonDetail pokemonDetail) {
+    public Response updateId(String id, PokemonDetail pokemonDetail) {
         try {
             pokemonPersonalRepository.update(id, pokemonDetail);
             return Response.status(Response.Status.ACCEPTED).build();

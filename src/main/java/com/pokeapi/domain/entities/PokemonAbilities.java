@@ -15,4 +15,5 @@ public class PokemonAbilities {
     public void setAbility(PokemonAbility ability) {
         this.ability = ability;
     }
+
 }

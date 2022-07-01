@@ -14,4 +14,5 @@ public class PokemonSmallImage {
     public void setFrontDefault(String frontDefault) {
         this.frontDefault = frontDefault;
     }
+
 }

@@ -14,4 +14,5 @@ public class PokemonBigImage {
     public void setFrontDefault(PokemonSmallImage pokemonSmallImage) {
         this.pokemonSmallImage = pokemonSmallImage;
     }
+
 }

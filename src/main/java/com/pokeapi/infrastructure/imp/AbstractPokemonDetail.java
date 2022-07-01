@@ -27,8 +27,7 @@ public abstract class AbstractPokemonDetail implements PokemonOfficialDetailServ
         try{
             LOGGER.info(String.format("Buscando Pokemon id %s no site %s", id, dominio));
             return target.path(buildPath(id)).request().get(PokemonDetail.class);
-        }
-        catch (Exception exception){
+        } catch (Exception exception){
             LOGGER.info("Error in Abstract Detail");
             throw exception;
         }

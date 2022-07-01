@@ -2,21 +2,17 @@ package com.pokeapi.domain.entities;
 
 import java.util.List;
 
-public class PokemonBasicResponsesPokeApi {
+public class PokemonBasicResponsesPoke {
 
     private Integer count;
     private List<PokemonBasicResponse> results;
 
-    public PokemonBasicResponsesPokeApi() {
+    public PokemonBasicResponsesPoke() {
 
     }
 
     public Integer getCount() {
         return count;
-    }
-
-    public void setCount(Integer count) {
-        this.count = count;
     }
 
     public List<PokemonBasicResponse> getResults() {
@@ -25,5 +21,7 @@ public class PokemonBasicResponsesPokeApi {
 
     public void setResults(List<PokemonBasicResponse>results) {
         this.results = results;
+        this.count = results.size();
     }
+
 }

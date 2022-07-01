@@ -1,10 +1,10 @@
 package com.pokeapi.infrastructure.gateway;
 
-import com.pokeapi.domain.entities.PokemonFullContracts;
+import com.pokeapi.domain.entities.PokemonFullContractList;
 
 public interface PokemonFullService {
-    PokemonFullContracts getPokemonOfficial();
-    PokemonFullContracts getPokemonPersonal(String model);
-    PokemonFullContracts getPokemonAll(String model);
-    PokemonFullContracts pokemonGetValidation(String model);
+    PokemonFullContractList getPokemonOfficial();
+    PokemonFullContractList getPokemonPersonal();
+    PokemonFullContractList getPokemonAll();
+    PokemonFullContractList pokemonGetValidation(String model);
 }

@@ -1,6 +1,6 @@
 package com.pokeapi.infrastructure.imp;
 
-import com.pokeapi.domain.entities.PokemonBasicResponsesPokeApi;
+import com.pokeapi.domain.entities.PokemonBasicResponsesPoke;
 import com.pokeapi.infrastructure.gateway.PokemonOficialBasicService;
 
 import javax.ws.rs.client.Client;
@@ -19,12 +19,11 @@ public abstract class AbstractPokemonBasic implements PokemonOficialBasicService
         Client client = ClientBuilder.newClient();
         this.webTarget = client.target(domain);
     }
-
     @Override
-    public PokemonBasicResponsesPokeApi officialList() {
+    public PokemonBasicResponsesPoke officialList() {
         try {
             LOGGER.info(String.format("Buscando lista de Pokemons no site %s", domain));
-            return webTarget.request().get(PokemonBasicResponsesPokeApi.class);
+            return webTarget.request().get(PokemonBasicResponsesPoke.class);
         } catch (Exception exception) {
             LOGGER.info("Error");
             throw exception;

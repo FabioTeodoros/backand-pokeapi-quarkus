@@ -15,4 +15,5 @@ public class PokemonTypes {
     public void setType(PokemonType type) {
         this.type = type;
     }
+
 }

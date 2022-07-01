@@ -90,4 +90,34 @@ public class PokemonDetail {
         this.sprites = sprites;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PokemonDetail)) return false;
+
+        PokemonDetail that = (PokemonDetail) o;
+
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (height != null ? !height.equals(that.height) : that.height != null) return false;
+        if (weight != null ? !weight.equals(that.weight) : that.weight != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (baseExperience != null ? !baseExperience.equals(that.baseExperience) : that.baseExperience != null)
+            return false;
+        if (types != null ? !types.equals(that.types) : that.types != null) return false;
+        if (abilities != null ? !abilities.equals(that.abilities) : that.abilities != null) return false;
+        return sprites != null ? sprites.equals(that.sprites) : that.sprites == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (height != null ? height.hashCode() : 0);
+        result = 31 * result + (weight != null ? weight.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (baseExperience != null ? baseExperience.hashCode() : 0);
+        result = 31 * result + (types != null ? types.hashCode() : 0);
+        result = 31 * result + (abilities != null ? abilities.hashCode() : 0);
+        result = 31 * result + (sprites != null ? sprites.hashCode() : 0);
+        return result;
+    }
 }

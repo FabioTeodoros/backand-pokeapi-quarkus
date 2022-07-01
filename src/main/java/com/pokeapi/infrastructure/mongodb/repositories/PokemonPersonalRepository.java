@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 import static com.mongodb.client.model.Filters.eq;
 
 @ApplicationScoped
-public class PokemonPersonalRepository {
+public class PokemonPersonalRepository implements com.pokeapi.infrastructure.gateway.PokemonPersonalRepository {
 
     final static Long EXIST_BD = 0L;
 
@@ -42,65 +42,47 @@ public class PokemonPersonalRepository {
     @Inject
     MongoClient mongoClient;
 
+    @Override
     public PokemonDetail id(String id) {
-
-        PokemonDetail pokemonDetail;
+        PokemonDetail pokemonDetail = new PokemonDetail();
         try {
             FindIterable<PokemonDetail> pokemonDetailFind = collection().find(getId(id));
             pokemonDetail = pokemonDetailFind.first();
             if (pokemonDetail == null) {
                 LOGGER.info("Pokemon Detail Personal Id not exist");
-                return null;
+                return pokemonDetail;
             }
         } catch (MongoException mongoException) {
             LOGGER.info("Error in get Pokemon Personal Id with MongoBd");
-            return null;
         } catch (Exception exception) {
-            LOGGER.info("Exception in get Pokémons Detail Personal Id " + exception);
-            return null;
-        }
-        LOGGER.info("Get Pokémon Detail Personal Id Success");
+            LOGGER.info("Exception in get Pokémon Detail Personal Id ");
+        }LOGGER.info("Get Pokémon Detail Personal Id Success");
         return pokemonDetail;
     }
 
-    public PokemonBasicResponsesPokeApi list(String model) {
-        PokemonBasicResponsesPokeApi pokemonListPersonal = new PokemonBasicResponsesPokeApi();
-        PokemonDetail pokemonDetail;
+    @Override
+    public List<PokemonDetail> list() {
+        List<PokemonDetail> pokemonsPersonal = new ArrayList<>();
         try {
-            FindIterable<PokemonDetail> pokemonDetailFind = collection().find();
-            pokemonDetail = pokemonDetailFind.first();
-            if (pokemonDetail == null) {
-                LOGGER.info("These Pokémons doesn't exist");
-                return null;
+            Bson projection = Projections.fields(Projections.include("name"));
+            MongoCursor<PokemonDetail> cursor = collection().find().projection(projection).iterator();
+            while (cursor.hasNext()) {
+                pokemonsPersonal.add(cursor.next());
             }
-                Bson projection = Projections.fields(Projections.include("name"));
-                MongoCursor<PokemonDetail> cursor = collection().find().projection(projection).iterator();
-                List<PokemonBasicResponse> listPersonal = new ArrayList<>();
-                PokemonBasicResponse pokemonBasicResponse;
-                while (cursor.hasNext()) {
-                    pokemonDetail = cursor.next();
-                    pokemonBasicResponse = new PokemonBasicResponse();
-                    pokemonBasicResponse.setName(pokemonDetail.getName());
-                    pokemonBasicResponse.setId(pokemonDetail.getId());
-                    listPersonal.add(pokemonBasicResponse);
-                }
-                LOGGER.info("get Pokémons list Personal");
-                pokemonListPersonal.setCount(listPersonal.size());
-                pokemonListPersonal.setResults(listPersonal);
-
         } catch (MongoException mongoException) {
             LOGGER.info("Error with MongoBd");
         } catch (Exception exception) {
             LOGGER.info("error in get Pokémons personal list");
-        }
-        return pokemonListPersonal;
+        } LOGGER.info("Get pokemon list personal success");
+        return pokemonsPersonal;
     }
 
+    @Override
     public void insert(PokemonDetail pokemonDetail) {
         try {
-                pokemonDetail.setId(UUID.randomUUID().toString());
-                collection().insertOne(pokemonDetail);
-                LOGGER.info("Pokemon Personal Create Success");
+            pokemonDetail.setId(UUID.randomUUID().toString());
+            collection().insertOne(pokemonDetail);
+            LOGGER.info("Pokemon Personal Create Success");
         } catch (MongoException mongoException) {
             LOGGER.info("Error with MongoBd");
         } catch (Exception exception) {
@@ -108,16 +90,12 @@ public class PokemonPersonalRepository {
         }
     }
 
+    @Override
     public void delete(String id) {
         try {
-            long queryId = collection().countDocuments(getId(id));
-            if (queryId == (EXIST_BD)){
+            if(collection().deleteOne(getId(id)).getDeletedCount() == EXIST_BD) {
                 LOGGER.info("Error this id does not exists");
-                throw new IllegalArgumentException("Incorrect Id");
-            }
-            Document document = new Document().append("_id", id);
-            collection().deleteOne(document);
-            LOGGER.info(String.format("deleted pokemon id: %s", id));
+            }else LOGGER.info(String.format("deleted pokemon id: %s", id));
         } catch (MongoException mongoException) {
             LOGGER.info("Error with MongoBd");
         } catch (Exception exception) {
@@ -125,24 +103,17 @@ public class PokemonPersonalRepository {
         }
     }
 
+    @Override
     public void update(String id, PokemonDetail pokemonDetail) {
         try {
-            FindIterable<PokemonDetail> pokemonDetailFind = collection().find(getId(id));
-            if (pokemonDetail == null) {
-                LOGGER.info("Error update, this id does not exists");
-            }
-            String uuid = (UUID.randomUUID().toString());
-            Document queryBd = new Document();
-            queryBd.put("_id", id);
-            Document newDocBd = new Document();
-            newDocBd.put("_id", uuid);
-            Document updateNewDocBd = new Document();
-            updateNewDocBd.put("$set", newDocBd);
-            collection().updateOne(queryBd, updateNewDocBd);
-            LOGGER.info(String.format("Pokémon has been updated"));
-        } catch (Exception exception) {
+                Document command = new Document("$set", pokemonDetail);
+                if(collection().updateOne(getId(id), command).getMatchedCount() == EXIST_BD){
+                    LOGGER.info("Error update, this id does not exists");
+                }else LOGGER.info(String.format("Pokémon has been updated"));
+        } catch (MongoException mongoException) {
+            LOGGER.info("Error with MongoBd");
+        }catch (Exception exception) {
             LOGGER.info("Error in update Pokémons");
-            throw exception;
         }
     }
 }

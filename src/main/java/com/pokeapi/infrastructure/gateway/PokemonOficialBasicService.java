@@ -1,7 +1,7 @@
 package com.pokeapi.infrastructure.gateway;
 
-import com.pokeapi.domain.entities.PokemonBasicResponsesPokeApi;
+import com.pokeapi.domain.entities.PokemonBasicResponsesPoke;
 
 public interface PokemonOficialBasicService {
-     PokemonBasicResponsesPokeApi officialList();
+     PokemonBasicResponsesPoke officialList();
 }

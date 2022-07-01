@@ -11,4 +11,5 @@ public class PokemonType {
     public void setName(String name) {
         this.name = name;
     }
+
 }
