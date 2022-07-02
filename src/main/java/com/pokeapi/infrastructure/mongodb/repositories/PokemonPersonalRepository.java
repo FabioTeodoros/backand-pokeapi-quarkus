@@ -95,7 +95,7 @@ public class PokemonPersonalRepository implements com.pokeapi.infrastructure.gat
     @Override
     public void delete(String id) {
         try {
-            if (collection().deleteOne(getId(id)).getDeletedCount() == EXIST_BD) {
+            if (collection().deleteOne(getId(id)).getDeletedCount() == EXIST_BD) { //melhorar nome const
                 LOGGER.info("Error this id does not exists");
             } else LOGGER.info(String.format("deleted pokemon id: %s", id));
         } catch (MongoException mongoException) {

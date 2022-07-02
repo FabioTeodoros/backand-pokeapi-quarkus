@@ -4,7 +4,7 @@ import com.pokeapi.domain.entities.*;
 import com.pokeapi.domain.enums.PokemonModel;
 import com.pokeapi.infrastructure.gateway.PokemonFullService;
 import com.pokeapi.infrastructure.gateway.PokemonOficialBasicService;
-import com.pokeapi.infrastructure.mongodb.repositories.PokemonPersonalRepository;
+import com.pokeapi.infrastructure.gateway.PokemonPersonalRepository;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -12,6 +12,8 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @ApplicationScoped
 public class PokemonFullContractService implements PokemonFullService {
@@ -47,7 +49,7 @@ public class PokemonFullContractService implements PokemonFullService {
                 pokemonFullContractBasic = new PokemonFullContractBasic();
                 pokemonFullContractBasic.setName(pokemonBasicResponsesPoke.getResults().get(index).getName());
                 pokemonFullContractBasic.setModel(PokemonModel.OFFICIAL.getDescriptor());
-                if (index <= OFFSET_SMALL){
+                if (index <= OFFSET_SMALL){                                                    //ponto a repensar a quantidade de pokes
                     pokemonFullContractBasic.setId(String.valueOf((index + OFFSET)));
                     pokemonFullContractBasic.setUrlImage(URL_IMAGE_OFFICIAL.replace("{id}",
                             Integer.toString(index + OFFSET)));
@@ -91,17 +93,14 @@ public class PokemonFullContractService implements PokemonFullService {
         try {
             List<PokemonFullContractBasic> pokemonFullContractBasicsOfficial = this.getPokemonOfficial().getResults();
             List<PokemonFullContractBasic> pokemonFullContractBasicsPersonal = this.getPokemonPersonal().getResults();
-            List<PokemonFullContractBasic> pokemonFullContractBasicsAll = new ArrayList<>();
-            pokemonFullContractBasicsAll.addAll(pokemonFullContractBasicsPersonal);
-            pokemonFullContractBasicsAll.addAll(pokemonFullContractBasicsOfficial);
+            List<PokemonFullContractBasic> pokemonFullContractBasicsAll = Stream.
+                    concat(pokemonFullContractBasicsOfficial.stream(),
+                    pokemonFullContractBasicsPersonal.stream()).collect(Collectors.toList());
             pokemonFullContracts.setResults(pokemonFullContractBasicsAll);
-
             LOGGER.info("Service getPokemonAll Success");
-        }
-        catch (Exception exception){
+        } catch (Exception exception){
             LOGGER.info("Error Service getPokemonAll");
-        }
-        return pokemonFullContracts;
+        }return pokemonFullContracts;
     }
 
     public PokemonFullContractFull pokemonGetValidation(String model) {
@@ -112,8 +111,7 @@ public class PokemonFullContractService implements PokemonFullService {
                 return getPokemonOfficial();
             } else if (model.equals(PokemonModel.ALL.getDescriptor())) {
                 return getPokemonAll();
-            }
-            return null;
+            }return null;
         } catch (Exception exception) {
             LOGGER.info("Error Service pokemonGetValidation");
             return null;
